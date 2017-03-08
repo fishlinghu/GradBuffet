@@ -1,9 +1,10 @@
-<?php include "dbinfo.inc"; ?>
+<?php 
+  include "dbinfo.inc"; 
+?>
 <html>
 <body>
 <h1>Sample page</h1>
 <?php
-
   /* Connect to MySQL and select the database. */
   $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
 
