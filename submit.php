@@ -4,9 +4,12 @@
   ini_set('display_errors', 'On');
   ?>
 
+  <html lang="en">
+  <?php
+
+/*connection to mySQL and select database*/
 
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
