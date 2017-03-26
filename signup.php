@@ -1,5 +1,5 @@
-<?php 
-  include "dbinfo.inc"; 
+<?php
+  include "dbinfo.inc";
   error_reporting(E_ALL);
   ini_set('display_errors', 'On');
 ?>
@@ -14,10 +14,10 @@
   $database = mysqli_select_db($connection, DB_DATABASE);
 
   /* Ensure that the User table exists. */
-  VerifyApplicantTable($connection, DB_DATABASE); 
+  VerifyApplicantTable($connection, DB_DATABASE);
 
   /* If input fields are populated, add a row to the Employees table. */
-  
+
   $applicant_account = htmlentities($_POST['account']);
   $applicant_pwd = htmlentities($_POST['pwd']);
   $applicant_gpa = htmlentities($_POST['gpa']);
@@ -28,10 +28,10 @@
   $applicant_gmat = htmlentities($_POST['gmat']);
   $applicant_foreign_student = htmlentities($_POST['foreign_student']);
   $applicant_num_pub = htmlentities($_POST['num_pub']);
-  
+
   if (strlen($applicant_account) && strlen($applicant_pwd)) {
-    AddApplicant($connection, 
-      $applicant_account, 
+    AddApplicant($connection,
+      $applicant_account,
       $applicant_pwd,
       $applicant_gpa,
       $applicant_toefl,
@@ -42,7 +42,7 @@
       $applicant_foreign_student,
       $applicant_num_pub);
   }
-  
+
 ?>
 <head>
   <meta charset="utf-8">
@@ -102,7 +102,7 @@
 function AddApplicant($connection, $account, $pwd, $gpa, $toefl, $greV, $greQ, $greAWA, $gmat, $foreign_student, $num_pub) {
    $clean_account = mysqli_real_escape_string($connection, $account);
 
-   $query = "INSERT INTO `Applicant` (`account`, `pwd`, `gpa`, `toefl`, `greV`, `greQ`, `greAWA`, `gmat`, `foreign_student`, `num_pub`) 
+   $query = "INSERT INTO `Applicant` (`account`, `pwd`, `gpa`, `toefl`, `greV`, `greQ`, `greAWA`, `gmat`, `foreign_student`, `num_pub`)
               VALUES ('$clean_account', '$pwd', '$gpa', '$toefl', '$greV', '$greQ', '$greAWA', '$gmat', '$foreign_student', '$num_pub');";
 
    if(!mysqli_query($connection, $query)) echo("Error adding applicant data.". mysqli_error($connection));
@@ -110,7 +110,7 @@ function AddApplicant($connection, $account, $pwd, $gpa, $toefl, $greV, $greQ, $
 
 /* Check whether the table exists and, if not, create it. */
 function VerifyApplicantTable($connection, $dbName) {
-  if(!TableExists("Applicant", $connection, $dbName)) 
+  if(!TableExists("Applicant", $connection, $dbName))
   {
   $query = "CREATE TABLE `Applicant` (
           `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -137,7 +137,7 @@ function TableExists($tableName, $connection, $dbName) {
   $t = mysqli_real_escape_string($connection, $tableName);
   $d = mysqli_real_escape_string($connection, $dbName);
 
-  $checktable = mysqli_query($connection, 
+  $checktable = mysqli_query($connection,
       "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME = '$t' AND TABLE_SCHEMA = '$d'");
 
   if(mysqli_num_rows($checktable) > 0) return true;

@@ -13,6 +13,36 @@
  $database = mysqli_select_db($connection, DB_DATABASE);
 
  /* Ensure User table exists */
+ VerifyApplicantTable($connection, DB_DATABASE);
+
+ /* If input fields are populated, add a row to the Employees table. */
+
+ $applicant_account = htmlentities($_POST['account']);
+ $applicant_pwd = htmlentities($_POST['pwd']);
+ $applicant_gpa = htmlentities($_POST['gpa']);
+ $applicant_toefl = htmlentities($_POST['toefl']);
+ $applicant_greV = htmlentities($_POST['greV']);
+ $applicant_greQ = htmlentities($_POST['greQ']);
+ $applicant_greAWA = htmlentities($_POST['greAWA']);
+ $applicant_gmat = htmlentities($_POST['gmat']);
+ $applicant_foreign_student = htmlentities($_POST['foreign_student']);
+ $applicant_num_pub = htmlentities($_POST['num_pub']);
+
+ if (strlen($applicant_account) && strlen($applicant_pwd)) {
+   AddApplicant($connection,
+     $applicant_account,
+     $applicant_pwd,
+     $applicant_gpa,
+     $applicant_toefl,
+     $applicant_greV,
+     $applicant_greQ,
+     $applicant_greAWA,
+     $applicant_gmat,
+     $applicant_foreign_student,
+     $applicant_num_pub);
+ }
+
+?>
 
 <html lang="en">
 <head>
