@@ -13,35 +13,15 @@
 
   $database = mysqli_select_db($connection, DB_DATABASE);
 
-  /* Ensure that the User table exists. */
-  VerifyApplicantTable($connection, DB_DATABASE);
-
-  /* If input fields are populated, add a row to the Employees table. */
-
-  $applicant_account = htmlentities($_POST['account']);
-  $applicant_pwd = htmlentities($_POST['pwd']);
-  $applicant_gpa = htmlentities($_POST['gpa']);
-  $applicant_toefl = htmlentities($_POST['toefl']);
-  $applicant_greV = htmlentities($_POST['greV']);
-  $applicant_greQ = htmlentities($_POST['greQ']);
-  $applicant_greAWA = htmlentities($_POST['greAWA']);
-  $applicant_gmat = htmlentities($_POST['gmat']);
-  $applicant_foreign_student = htmlentities($_POST['foreign_student']);
-  $applicant_num_pub = htmlentities($_POST['num_pub']);
-
-  if (strlen($applicant_account) && strlen($applicant_pwd)) {
-    AddApplicant($connection,
-      $applicant_account,
-      $applicant_pwd,
-      $applicant_gpa,
-      $applicant_toefl,
-      $applicant_greV,
-      $applicant_greQ,
-      $applicant_greAWA,
-      $applicant_gmat,
-      $applicant_foreign_student,
-      $applicant_num_pub);
-  }
+  if(!TableExists("School", $connection, DB_DATABASE) || !TableExists("Application", $connection, DB_DATABASE))
+    { 
+    // print to html saying that there is no data now
+    }
+  else
+    { 
+    $sql = "select name from School";
+    $result = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+    }
 
 ?>
 <head>
@@ -58,9 +38,9 @@
         <ul>
           <li><a class="home-link" href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="signup.html">Sign Up</a></li>
-          <li><a href="submit.html">Submit Result</a></li>
-          <li><a href="query.html">Make a Query</a></li>
+          <li><a href="signup.php">Sign Up</a></li>
+          <li><a href="submit.php">Submit Result</a></li>
+          <li><a href="query.php">Make a Query</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -68,7 +48,14 @@
     <section class="page-content">
       <article>
         <h1>User make query here</h1>
-
+        <label for="sname">School Name</label>
+        <input type="text" list="schoolname" autocomplete="off" id="sname">
+        <datalist id="schoolname">
+          <?php while($row = mysqli_fetch_array($result)) { ?>
+            <option value="<?php echo $row['school']; ?>"><?php echo $row['school']; ?></option>
+            <option value="HI">WTF</option>
+          <?php } ?>
+        </datalist>
       </article>
     </section>
     <div class="push"></div>
@@ -83,3 +70,17 @@
   <script src="js/set-background.js"></script>
 </body>
 </html>
+<?php
+/* Check for the existence of a table. */
+function TableExists($tableName, $connection, $dbName) {
+  $t = mysqli_real_escape_string($connection, $tableName);
+  $d = mysqli_real_escape_string($connection, $dbName);
+
+  $checktable = mysqli_query($connection,
+      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME = '$t' AND TABLE_SCHEMA = '$d'");
+
+  if(mysqli_num_rows($checktable) > 0) return true;
+
+  return false;
+}
+?>
