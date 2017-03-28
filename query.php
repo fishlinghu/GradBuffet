@@ -23,12 +23,20 @@
     // create the Program table
     createProgramTable($connection);
     }
+  // get the list for datalist
   $sql = "select name from School";
   $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
   $sql = "select name from Program";
   $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
+  // get the query parameters sent by user through POST
+  $schoolname = htmlentities($_POST['sname']);
+  $programname = htmlentities($_POST['pname']);
+  $L_GPA = $_POST['L_GPA'];
+  $U_GPA = $_POST['U_GPA'];
+  // use those parameters to do the query
+  $sql = "select * from application"; 
 ?>
 <head>
   <meta charset="utf-8">
@@ -56,7 +64,7 @@
         <h1>User make query here</h1>
         <form action='query.php' method='post'>
           <label for="sname">School Name</label>
-          <input type="text" list="schoolname" autocomplete="off" id="sname">
+          <input type="text" list="schoolname" autocomplete="off" name="sname">
           <datalist id="schoolname">
             <?php
             while($row = mysqli_fetch_array($schoolList)) 
@@ -67,7 +75,7 @@
           </datalist><br>
 
           <label for="pname">Program Name</label>
-          <input type="text" list="programname" autocomplete="off" id="sname">
+          <input type="text" list="programname" autocomplete="off" name="pname">
           <datalist id="programname">
             <?php
             while($row = mysqli_fetch_array($programList)) 
