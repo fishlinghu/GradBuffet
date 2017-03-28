@@ -16,7 +16,7 @@
   /* Ensure that the User table exists. */
   VerifyApplicantTable($connection, DB_DATABASE);
 
-  /* If input fields are populated, add a row to the Employees table. */
+  /* If input fields are populated, add a row to the application table. */
 
   $applicant_account = htmlentities($_POST['account']);
   $applicant_pwd = htmlentities($_POST['pwd']);

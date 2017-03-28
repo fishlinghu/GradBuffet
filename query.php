@@ -13,16 +13,21 @@
 
   $database = mysqli_select_db($connection, DB_DATABASE);
 
-  if(!TableExists("School", $connection, DB_DATABASE))
+  if(!TableExists("School", $connection, DB_DATABASE)) 
     { 
-    // actually we also have to check the existence of  !TableExists("Application", $connection, DB_DATABASE)
-    // print to html saying that there is no data now
-    }
-  else
+    // create the School table
+    createSchoolTable($connection);
+    } 
+  if(!TableExists("Program", $connection, DB_DATABASE)) 
     { 
-    $sql = "select name from School";
-    $result = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+    // create the Program table
+    createProgramTable($connection);
     }
+  $sql = "select name from School";
+  $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+
+  $sql = "select name from Program";
+  $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
 ?>
 <head>
@@ -54,12 +59,22 @@
           <input type="text" list="schoolname" autocomplete="off" id="sname">
           <datalist id="schoolname">
             <?php
-            while($row = mysqli_fetch_array($result)) 
+            while($row = mysqli_fetch_array($schoolList)) 
               { ?>
               <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
               <?php } 
             ?>
-            <!--option value="HI">WTF</option-->
+          </datalist>
+
+          <label for="pname">Program Name</label>
+          <input type="text" list="programname" autocomplete="off" id="sname">
+          <datalist id="programname">
+            <?php
+            while($row = mysqli_fetch_array($programList)) 
+              { ?>
+              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <?php } 
+            ?>
           </datalist>
           <input type='submit' value='submit'/>
         </form>
@@ -90,4 +105,36 @@ function TableExists($tableName, $connection, $dbName) {
 
   return false;
 }
+
+function createSchoolTable($connection)
+  {
+  $query = "CREATE TABLE `School` (
+          `ID` int(11) NOT NULL AUTO_INCREMENT,
+          `name` CHAR(64) NOT NULL,
+          `location` CHAR(64) DEFAULT NULL,
+          PRIMARY KEY (`ID`),
+          UNIQUE KEY `ID_UNIQUE` (`ID`)
+       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
+
+  if(!mysqli_query($connection, $query)) echo("Error creating school table.");
+  }
+function createProgramTable($connection)
+  {
+  $query = "CREATE TABLE `Program` (
+          `ID` int(11) NOT NULL AUTO_INCREMENT,
+          `name` CHAR(64) NOT NULL,
+          `avgGPA` FLOAT(4,3) DEFAULT NULL,
+          `avgTOEFL` FLOAT(4,1) DEFAULT NULL,
+          `avgGREV` FLOAT(4,1) DEFAULT NULL,
+          `avgGREQ` FLOAT(4,1) DEFAULT NULL,
+          `avgGREAWA` FLOAT(3,2) DEFAULT NULL,
+          `avgGMAT` FLOAT(4,1) DEFAULT NULL,
+          `ad_rate` FLOAT(4,3) DEFAULT 0,
+          `school_ID` int(11) DEFAULT NULL,
+          PRIMARY KEY (`ID`),
+          UNIQUE KEY `ID_UNIQUE` (`ID`)
+       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
+
+  if(!mysqli_query($connection, $query)) echo("Error creating program table.");
+  }
 ?>
