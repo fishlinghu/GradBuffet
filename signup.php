@@ -59,8 +59,8 @@
           <li><a class="home-link" href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="signup.php">Sign Up</a></li>
-          <li><a href="submit.html">Submit Result</a></li>
-          <li><a href="query.html">Make a Query</a></li>
+          <li><a href="submit.php">Submit Result</a></li>
+          <li><a href="query.php">Make a Query</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -78,7 +78,7 @@
             GRE AWA: <input type="text" name="greAWA"><br>
             GMAT: <input type="text" name="gmat"><br>
             Foreign student or not: <input type="text" name="foreign_student"><br>
-            Number of publications: <input type="text" name="num_pub"><br>
+            Number of publications: <input type="number" name="num_pub" value=0 step=1><br>
             <input type="submit">
           </form>
       </article>

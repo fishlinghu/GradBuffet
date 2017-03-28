@@ -54,7 +54,7 @@
     <section class="page-content">
       <article>
         <h1>User make query here</h1>
-        <form action='' method='post'>
+        <form action='query.php' method='post'>
           <label for="sname">School Name</label>
           <input type="text" list="schoolname" autocomplete="off" id="sname">
           <datalist id="schoolname">
@@ -64,7 +64,7 @@
               <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
               <?php } 
             ?>
-          </datalist>
+          </datalist><br>
 
           <label for="pname">Program Name</label>
           <input type="text" list="programname" autocomplete="off" id="sname">
@@ -75,9 +75,13 @@
               <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
               <?php } 
             ?>
-          </datalist>
-          <input type='submit' value='submit'/>
+          </datalist><br>
+          Lower bound of GPA: <input type="number" name="L_GPA" value="0.0" step = 0.1><br>
+          Upper bound of GPA: <input type="number" name="U_GPA" value="4.0" step = 0.1><br>
+          <br><input type='submit' name = 'submit' value='submit'/>
         </form>
+
+        <p>Search by average GPA</p>
       </article>
     </section>
     <div class="push"></div>
