@@ -13,8 +13,9 @@
 
   $database = mysqli_select_db($connection, DB_DATABASE);
 
-  if(!TableExists("School", $connection, DB_DATABASE) || !TableExists("Application", $connection, DB_DATABASE))
+  if(!TableExists("School", $connection, DB_DATABASE))
     { 
+    // actually we also have to check the existence of  !TableExists("Application", $connection, DB_DATABASE)
     // print to html saying that there is no data now
     }
   else
@@ -48,14 +49,20 @@
     <section class="page-content">
       <article>
         <h1>User make query here</h1>
-        <label for="sname">School Name</label>
-        <input type="text" list="schoolname" autocomplete="off" id="sname">
-        <datalist id="schoolname">
-          <?php while($row = mysqli_fetch_array($result)) { ?>
-            <option value="<?php echo $row['school']; ?>"><?php echo $row['school']; ?></option>
-            <option value="HI">WTF</option>
-          <?php } ?>
-        </datalist>
+        <form action='' method='post'>
+          <label for="sname">School Name</label>
+          <input type="text" list="schoolname" autocomplete="off" id="sname">
+          <datalist id="schoolname">
+            <?php
+            while($row = mysqli_fetch_array($result)) 
+              { ?>
+              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <?php } 
+            ?>
+            <!--option value="HI">WTF</option-->
+          </datalist>
+          <input type='submit' value='submit'/>
+        </form>
       </article>
     </section>
     <div class="push"></div>
