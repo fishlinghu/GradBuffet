@@ -69,6 +69,19 @@
     <section class="page-content">
       <article>
         <h1>User submit their result here</h1>
+        <form action="submit.php" method="post">
+          Account: <input type="text" name="account"><br>
+          Password: <input type="password" name="pwd"><br>
+          GPA: <input type="text" name="gpa"><br>
+          TOEFL: <input type="text" name="toefl"><br>
+          GRE Verbal: <input type="text" name="greV"><br>
+          GRE Quantity: <input type="text" name="greQ"><br>
+          GRE AWA: <input type="text" name="greAWA"><br>
+          GMAT: <input type="text" name="gmat"><br>
+          Foreign student or not: <input type="text" name="foreign_student"><br>
+          Number of publications: <input type="text" name="num_pub"><br>
+          <input type="submit">
+        </form>
 
       </article>
     </section>
