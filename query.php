@@ -1,5 +1,6 @@
 <?php
   include "dbinfo.inc";
+  include "checkTable.php";
   error_reporting(E_ALL);
   ini_set('display_errors', 'On');
 ?>
@@ -13,16 +14,9 @@
 
   $database = mysqli_select_db($connection, DB_DATABASE);
 
-  if(!TableExists("School", $connection, DB_DATABASE)) 
-    { 
-    // create the School table
-    createSchoolTable($connection);
-    } 
-  if(!TableExists("Program", $connection, DB_DATABASE)) 
-    { 
-    // create the Program table
-    createProgramTable($connection);
-    }
+  /* Ensure User table exists */
+  VerifyTable($connection, DB_DATABASE);
+  
   // get the list for datalist
   $sql = "select name from School";
   $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
@@ -106,47 +100,4 @@
 </html>
 <?php
 /* Check for the existence of a table. */
-function TableExists($tableName, $connection, $dbName) {
-  $t = mysqli_real_escape_string($connection, $tableName);
-  $d = mysqli_real_escape_string($connection, $dbName);
-
-  $checktable = mysqli_query($connection,
-      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME = '$t' AND TABLE_SCHEMA = '$d'");
-
-  if(mysqli_num_rows($checktable) > 0) return true;
-
-  return false;
-}
-
-function createSchoolTable($connection)
-  {
-  $query = "CREATE TABLE `School` (
-          `ID` int(11) NOT NULL AUTO_INCREMENT,
-          `name` CHAR(64) NOT NULL,
-          `location` CHAR(64) DEFAULT NULL,
-          PRIMARY KEY (`ID`),
-          UNIQUE KEY `ID_UNIQUE` (`ID`)
-       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
-
-  if(!mysqli_query($connection, $query)) echo("Error creating school table.");
-  }
-function createProgramTable($connection)
-  {
-  $query = "CREATE TABLE `Program` (
-          `ID` int(11) NOT NULL AUTO_INCREMENT,
-          `name` CHAR(64) NOT NULL,
-          `avgGPA` FLOAT(4,3) DEFAULT NULL,
-          `avgTOEFL` FLOAT(4,1) DEFAULT NULL,
-          `avgGREV` FLOAT(4,1) DEFAULT NULL,
-          `avgGREQ` FLOAT(4,1) DEFAULT NULL,
-          `avgGREAWA` FLOAT(3,2) DEFAULT NULL,
-          `avgGMAT` FLOAT(4,1) DEFAULT NULL,
-          `ad_rate` FLOAT(4,3) DEFAULT 0,
-          `school_ID` int(11) DEFAULT NULL,
-          PRIMARY KEY (`ID`),
-          UNIQUE KEY `ID_UNIQUE` (`ID`)
-       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
-
-  if(!mysqli_query($connection, $query)) echo("Error creating program table.");
-  }
 ?>

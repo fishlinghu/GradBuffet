@@ -1,5 +1,6 @@
 <?php
   include "dbinfo.inc";
+  include "checkTable.php";
   error_reporting(E_ALL);
   ini_set('display_errors', 'On');
   ?>
@@ -13,13 +14,13 @@
  $database = mysqli_select_db($connection, DB_DATABASE);
 
  /* Ensure User table exists */
- VerifyApplicantTable($connection, DB_DATABASE);
+ VerifyTable($connection, DB_DATABASE);
 
  /* If input fields are populated, add a row to the Employees table. */
 
- if (strlen($applicant_account) && strlen($applicant_pwd)) {
-   AddApplication();
- }
+ //if (strlen($applicant_account) && strlen($applicant_pwd)) {
+   //AddApplication();
+ //}
 
 ?>
 
@@ -106,39 +107,5 @@ function AddApplication($connection, $schoolName, $programName, $term, $dateSub,
               VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$account', '$result');";
 
     if(!mysqli_query($connection, $query)) echo("Error adding application data.". mysqli_error($connection));
-}
-
-/* Check whether the table exists and, if not, create it. */
-function VerifyApplicationTable($connection, $dbName) {
-  if(!TableExists("Application", $connection, $dbName))
-  {
-  $query = "CREATE TABLE `Application` (
-          `ID` int(11) NOT NULL AUTO_INCREMENT,
-          `schoolID` int(11) NOT NULL,
-          `programID` int(11) NOT NULL,
-          `term` CHAR(40) DEFAULT NULL,
-          `dateSub` DATE DEFAULT NULL,
-          `dateResult` DATE DEFAULT NULL,
-          `applicantID` int(11) NOT NULL,
-          `result` TINYINT(1) DEFAULT 0,
-          PRIMARY KEY (`ID`),
-          UNIQUE KEY `ID_UNIQUE` (`ID`)
-       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
-
-     if(!mysqli_query($connection, $query)) echo("Error creating table.");
-  }
-}
-
-/* Check for the existence of a table. */
-function TableExists($tableName, $connection, $dbName) {
-  $t = mysqli_real_escape_string($connection, $tableName);
-  $d = mysqli_real_escape_string($connection, $dbName);
-
-  $checktable = mysqli_query($connection,
-      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME = '$t' AND TABLE_SCHEMA = '$d'");
-
-  if(mysqli_num_rows($checktable) > 0) return true;
-
-  return false;
 }
 ?>
