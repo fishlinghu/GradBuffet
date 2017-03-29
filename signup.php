@@ -16,18 +16,18 @@
   /* Ensure that the User table exists. */
   VerifyApplicantTable($connection, DB_DATABASE);
 
-  /* If input fields are populated, add a row to the Employees table. */
+  /* If input fields are populated, add a row to the application table. */
 
-  $applicant_account = htmlentities($_POST['account']);
-  $applicant_pwd = htmlentities($_POST['pwd']);
-  $applicant_gpa = htmlentities($_POST['gpa']);
-  $applicant_toefl = htmlentities($_POST['toefl']);
-  $applicant_greV = htmlentities($_POST['greV']);
-  $applicant_greQ = htmlentities($_POST['greQ']);
-  $applicant_greAWA = htmlentities($_POST['greAWA']);
-  $applicant_gmat = htmlentities($_POST['gmat']);
-  $applicant_foreign_student = htmlentities($_POST['foreign_student']);
-  $applicant_num_pub = htmlentities($_POST['num_pub']);
+  $applicant_account = (isset($_POST['account']) ? $_POST['account'] : null);
+  $applicant_pwd = (isset($_POST['pwd']) ? $_POST['pwd'] : null);
+  $applicant_gpa = (isset($_POST['gpa']) ? $_POST['gpa'] : null);
+  $applicant_toefl = (isset($_POST['toefl']) ? $_POST['toefl'] : null);
+  $applicant_greV = (isset($_POST['greV']) ? $_POST['greV'] : null);
+  $applicant_greQ = (isset($_POST['greQ']) ? $_POST['greQ'] : null);
+  $applicant_greAWA = (isset($_POST['greAWA']) ? $_POST['greAWA'] : null);
+  $applicant_gmat = (isset($_POST['gmat']) ? $_POST['gmat'] : null);
+  $applicant_foreign_student = (isset($_POST['foreign_student']) ? $_POST['foreign_student'] : null);
+  $applicant_num_pub = (isset($_POST['num_pub']) ? $_POST['num_pub'] : null);
 
   if (strlen($applicant_account) && strlen($applicant_pwd)) {
     AddApplicant($connection,
@@ -59,8 +59,8 @@
           <li><a class="home-link" href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="signup.php">Sign Up</a></li>
-          <li><a href="submit.html">Submit Result</a></li>
-          <li><a href="query.html">Make a Query</a></li>
+          <li><a href="submit.php">Submit Result</a></li>
+          <li><a href="query.php">Make a Query</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -71,14 +71,14 @@
           <form action="signup.php" method="post">
             Account: <input type="text" name="account"><br>
             Password: <input type="password" name="pwd"><br>
-            GPA: <input type="text" name="gpa"><br>
-            TOEFL: <input type="text" name="toefl"><br>
-            GRE Verbal: <input type="text" name="greV"><br>
-            GRE Quantity: <input type="text" name="greQ"><br>
-            GRE AWA: <input type="text" name="greAWA"><br>
-            GMAT: <input type="text" name="gmat"><br>
+            GPA: <input type="number" name="gpa" step=0.01><br>
+            TOEFL: <input type="number" name="toefl" value=0 step=1><br>
+            GRE Verbal: <input type="number" name="greV" value=0 step=1><br>
+            GRE Quantity: <input type="number" name="greQ" value=0 step=1><br>
+            GRE AWA: <input type="number" name="greAWA" value=0 step=0.5><br>
+            GMAT: <input type="number" name="gmat" value=0 step=1><br>
             Foreign student or not: <input type="text" name="foreign_student"><br>
-            Number of publications: <input type="text" name="num_pub"><br>
+            Number of publications: <input type="number" name="num_pub" value=0 step=1><br>
             <input type="submit">
           </form>
       </article>
