@@ -31,10 +31,10 @@
   $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
   // get the query parameters sent by user through POST
-  $schoolname = htmlentities($_POST['sname']);
-  $programname = htmlentities($_POST['pname']);
-  $L_GPA = $_POST['L_GPA'];
-  $U_GPA = $_POST['U_GPA'];
+  $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
+  $programname = (isset($_POST['pname']) ? $_POST['pname'] : null);
+  $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
+  $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
   // use those parameters to do the query
   $sql = "select * from application"; 
 ?>

@@ -17,29 +17,8 @@
 
  /* If input fields are populated, add a row to the Employees table. */
 
- $applicant_account = htmlentities($_POST['account']);
- $applicant_pwd = htmlentities($_POST['pwd']);
- $applicant_gpa = htmlentities($_POST['gpa']);
- $applicant_toefl = htmlentities($_POST['toefl']);
- $applicant_greV = htmlentities($_POST['greV']);
- $applicant_greQ = htmlentities($_POST['greQ']);
- $applicant_greAWA = htmlentities($_POST['greAWA']);
- $applicant_gmat = htmlentities($_POST['gmat']);
- $applicant_foreign_student = htmlentities($_POST['foreign_student']);
- $applicant_num_pub = htmlentities($_POST['num_pub']);
-
  if (strlen($applicant_account) && strlen($applicant_pwd)) {
-   AddApplicant($connection,
-     $applicant_account,
-     $applicant_pwd,
-     $applicant_gpa,
-     $applicant_toefl,
-     $applicant_greV,
-     $applicant_greQ,
-     $applicant_greAWA,
-     $applicant_gmat,
-     $applicant_foreign_student,
-     $applicant_num_pub);
+   AddApplication();
  }
 
 ?>
@@ -59,9 +38,9 @@
         <ul>
           <li><a class="home-link" href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="signup.html">Sign Up</a></li>
-          <li><a href="submit.html">Submit Result</a></li>
-          <li><a href="query.html">Make a Query</a></li>
+          <li><a href="signup.php">Sign Up</a></li>
+          <li><a href="submit.php">Submit Result</a></li>
+          <li><a href="query.php">Make a Query</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -70,16 +49,33 @@
       <article>
         <h1>User submit their result here</h1>
         <form action="submit.php" method="post">
-          Account: <input type="text" name="account"><br>
-          Password: <input type="password" name="pwd"><br>
-          GPA: <input type="text" name="gpa"><br>
-          TOEFL: <input type="text" name="toefl"><br>
-          GRE Verbal: <input type="text" name="greV"><br>
-          GRE Quantity: <input type="text" name="greQ"><br>
-          GRE AWA: <input type="text" name="greAWA"><br>
-          GMAT: <input type="text" name="gmat"><br>
-          Foreign student or not: <input type="text" name="foreign_student"><br>
-          Number of publications: <input type="text" name="num_pub"><br>
+          <label for="sname">School Name</label>
+          <input type="text" list="schoolname" autocomplete="off" name="sname">
+          <datalist id="schoolname">
+            <?php
+            while($row = mysqli_fetch_array($schoolList)) 
+              { ?>
+              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <?php } 
+            ?>
+          </datalist><br>
+
+          <label for="pname">Program Name</label>
+          <input type="text" list="programname" autocomplete="off" name="pname">
+          <datalist id="programname">
+            <?php
+            while($row = mysqli_fetch_array($programList)) 
+              { ?>
+              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <?php } 
+            ?>
+          </datalist><br>
+          Date of submission: <input type="date" name="dateSub"><br>
+          Date of result: <input type="date" name="dateResult"><br>
+          Result: <select name="result">
+                    <option value=0>Rejected</option>
+                    <option value=1>Admitted</option>
+                  </select><br>
           <input type="submit">
         </form>
 
@@ -97,3 +93,52 @@
   <script src="js/set-background.js"></script>
 </body>
 </html>
+
+
+<?php
+
+/* Add an applicant to the table. */
+function AddApplication($connection, $schoolName, $programName, $term, $dateSub, $dateResult, $account, $result) {
+    # $clean_account = mysqli_real_escape_string($connection, $account);
+    # use SQL query to get schoolID, programID, by schoolName, programName
+
+    $query = "INSERT INTO `Application` (`schoolID`, `programID`, `term`, `dateSub`, `dateResult`, `applicantID`, `result`)
+              VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$account', '$result');";
+
+    if(!mysqli_query($connection, $query)) echo("Error adding application data.". mysqli_error($connection));
+}
+
+/* Check whether the table exists and, if not, create it. */
+function VerifyApplicationTable($connection, $dbName) {
+  if(!TableExists("Application", $connection, $dbName))
+  {
+  $query = "CREATE TABLE `Application` (
+          `ID` int(11) NOT NULL AUTO_INCREMENT,
+          `schoolID` int(11) NOT NULL,
+          `programID` int(11) NOT NULL,
+          `term` CHAR(40) DEFAULT NULL,
+          `dateSub` DATE DEFAULT NULL,
+          `dateResult` DATE DEFAULT NULL,
+          `applicantID` int(11) NOT NULL,
+          `result` TINYINT(1) DEFAULT 0,
+          PRIMARY KEY (`ID`),
+          UNIQUE KEY `ID_UNIQUE` (`ID`)
+       ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1";
+
+     if(!mysqli_query($connection, $query)) echo("Error creating table.");
+  }
+}
+
+/* Check for the existence of a table. */
+function TableExists($tableName, $connection, $dbName) {
+  $t = mysqli_real_escape_string($connection, $tableName);
+  $d = mysqli_real_escape_string($connection, $dbName);
+
+  $checktable = mysqli_query($connection,
+      "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME = '$t' AND TABLE_SCHEMA = '$d'");
+
+  if(mysqli_num_rows($checktable) > 0) return true;
+
+  return false;
+}
+?>

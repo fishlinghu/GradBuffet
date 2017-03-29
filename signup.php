@@ -77,9 +77,12 @@
             GRE Quantity: <input type="number" name="greQ" value=0 step=1><br>
             GRE AWA: <input type="number" name="greAWA" value=0 step=0.5><br>
             GMAT: <input type="number" name="gmat" value=0 step=1><br>
-            Foreign student or not: <input type="text" name="foreign_student"><br>
+            Foreign student or not: <select name="foreign_student">
+                                      <option value=0>No</option>
+                                      <option value=1>Yes</option>
+                                    </select><br>
             Number of publications: <input type="number" name="num_pub" value=0 step=1><br>
-            <input type="submit">
+            <input type="submit" value="submit">
           </form>
       </article>
     </section>
