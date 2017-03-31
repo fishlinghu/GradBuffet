@@ -1,5 +1,33 @@
-<!DOCTYPE html>
+<?php
+  session_start();
+  include "dbinfo.inc";
+  include "checkTable.php";
+  error_reporting(E_ALL);
+  ini_set('display_errors', 'On');
+?>
 <html lang="en">
+<?php
+  /* Connect to MySQL and select the database. */
+  $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
+
+  if (mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
+
+  $database = mysqli_select_db($connection, DB_DATABASE);
+
+  /* Ensure that the User table exists. */
+  VerifyTable($connection, DB_DATABASE);
+
+  if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
+    { 
+    // user has logged in
+    echo "<a href=\"index.php\">Logout</a>";
+    }
+  else
+    {
+    // user did not log in
+    echo "<a href=\"login.php\">Login</a>";
+    }
+?>
 <head>
   <meta charset="utf-8">
   <title>GradBuffet</title>

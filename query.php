@@ -18,10 +18,10 @@
   VerifyTable($connection, DB_DATABASE);
   
   // get the list for datalist
-  $sql = "select name from School";
+  $sql = "SELECT name FROM School";
   $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-  $sql = "select name from Program";
+  $sql = "SELECT name FROM Program";
   $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
   // get the query parameters sent by user through POST
@@ -30,7 +30,7 @@
   $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
   $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
   // use those parameters to do the query
-  $sql = "select * from application"; 
+  $sql = "SELECT * FROM application"; 
 ?>
 <head>
   <meta charset="utf-8">

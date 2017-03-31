@@ -7,7 +7,6 @@
 ?>
 <html lang="en">
 <?php
-
   /* Connect to MySQL and select the database. */
   $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
 
@@ -18,8 +17,18 @@
   /* Ensure that the User table exists. */
   VerifyTable($connection, DB_DATABASE);
 
-  /* If input fields are populated, add a row to the application table. */
+  if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
+    { 
+    // user has logged in
+    echo "<a href=\"index.php\">Logout</a>";
+    }
+  else
+    {
+    // user did not log in
+    echo "<a href=\"login.php\">Login</a>";
+    }
 
+  /* If input fields are populated, add a row to the application table. */
   $applicant_account = (isset($_POST['account']) ? $_POST['account'] : null);
   $applicant_pwd = (isset($_POST['pwd']) ? $_POST['pwd'] : null);
   $applicant_gpa = (isset($_POST['gpa']) ? $_POST['gpa'] : null);
@@ -31,6 +40,7 @@
   $applicant_foreign_student = (isset($_POST['foreign_student']) ? $_POST['foreign_student'] : null);
   $applicant_num_pub = (isset($_POST['num_pub']) ? $_POST['num_pub'] : null);
 
+  $_POST = array();
   if (strlen($applicant_account) && strlen($applicant_pwd)) {
     AddApplicant($connection,
       $applicant_account,
@@ -44,7 +54,6 @@
       $applicant_foreign_student,
       $applicant_num_pub);
 
-    $_POST = array();
     echo "<script type=\"text/javascript\">
             alert(\"Thanks for your registration!\")
             location = \"index.php\"
