@@ -1,4 +1,5 @@
 <?php
+  session_start();
   include "dbinfo.inc";
   include "checkTable.php";
   error_reporting(E_ALL);
@@ -7,7 +8,22 @@
 
 <html lang="en">
   <?php
-
+  if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
+    { 
+    // user has logged in
+    echo "<a href=\"logout.php\">Logout</a>";
+    }
+  else
+    {
+    // user did not log in
+    
+    echo "<script type=\"text/javascript\">
+            alert(\"Please log in to submit your results!\")
+            location = \"login.php\"
+          </script>";
+    
+    //echo "<a href=\"login.php\">Login</a>";
+    }
   /*connection to mySQL and select database*/
   $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
   if(mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
@@ -58,17 +74,19 @@
     $dateResult = date('Y-m-d', strtotime($tmp));
 
     // get account
+    $applicantID = $_SESSION['applicantID'];
 
     // get result
     $result = (isset($_POST['result']) ? $_POST['result'] : null);
     
-    
+    /*
     echo $schoolID, '<br>';
     echo $term, '<br>';
     echo $dateSub, '<br>';
     echo $dateResult, '<br>';
     echo $result, '<br>';
-    
+    */
+    AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
     // print the message using javascript and jump to index page
     $_POST = array();
     echo "<script type=\"text/javascript\">
@@ -157,11 +175,11 @@
 <?php
 
 /* Add an applicant to the table. */
-function AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $account, $result) {
+function AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result) {
     # $clean_account = mysqli_real_escape_string($connection, $account);
 
     $query = "INSERT INTO `Application` (`schoolID`, `programID`, `term`, `dateSub`, `dateResult`, `applicantID`, `result`)
-              VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$account', '$result');";
+              VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$applicantID', '$result');";
 
     if(!mysqli_query($connection, $query)) echo("Error adding application data.". mysqli_error($connection));
 }
