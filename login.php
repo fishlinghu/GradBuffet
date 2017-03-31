@@ -8,6 +8,11 @@
 
 <html lang="en">
 <?php
+  if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
+    {
+    // already logged in, this page is accessed by accident
+    echo "<script type=\"text/javascript\">location = \"index.php\"</script>";
+    }
   /* Connect to MySQL and select the database. */
   $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
 

@@ -20,7 +20,7 @@
   if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
     { 
     // user has logged in
-    echo "<a href=\"index.php\">Logout</a>";
+    echo "<a href=\"logout.php\">Logout</a>";
     }
   else
     {
