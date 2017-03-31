@@ -3,26 +3,76 @@
   include "checkTable.php";
   error_reporting(E_ALL);
   ini_set('display_errors', 'On');
-  ?>
+?>
 
-  <html lang="en">
+<html lang="en">
   <?php
 
-/*connection to mySQL and select database*/
- $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
- if(mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
- $database = mysqli_select_db($connection, DB_DATABASE);
+  /*connection to mySQL and select database*/
+  $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
+  if(mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  $database = mysqli_select_db($connection, DB_DATABASE);
 
- /* Ensure User table exists */
- VerifyTable($connection, DB_DATABASE);
+  /* Ensure User table exists */
+  VerifyTable($connection, DB_DATABASE);
 
- /* If input fields are populated, add a row to the Employees table. */
+  // get the list for datalist
+  $sql = "SELECT name FROM School";
+  $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
- //if (strlen($applicant_account) && strlen($applicant_pwd)) {
-   //AddApplication();
- //}
+  $sql = "SELECT name FROM Program";
+  $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-?>
+  // get the query parameters sent by user through POST
+  $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
+  $programname = (isset($_POST['pname']) ? $_POST['pname'] : null);
+  if (strlen($schoolname) && strlen($programname)) 
+    {
+    // should we use degree level + program major?
+    //echo $schoolname;
+    //echo $programname;
+    
+    // get schoolID
+    $sql = "SELECT ID, name FROM School 
+            WHERE name = '$schoolname'";
+    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+    $sqlReturn = mysqli_fetch_array( $sqlReturn );
+    $schoolID = $sqlReturn['ID'];
+    
+    // get programID
+    $sql = "SELECT ID, name, school_ID FROM Program 
+            WHERE name = '$programname' AND school_ID = '$schoolID'";
+    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+    $sqlReturn = mysqli_fetch_array( $sqlReturn );
+    $programID = $sqlReturn['ID'];
+
+    // get term
+    $term = (isset($_POST['term']) ? $_POST['term'] : null);
+
+    // get date sub
+    $tmp = (isset($_POST['dateSub']) ? $_POST['dateSub'] : null);    
+    $dateSub = date('Y-m-d', strtotime($tmp));
+    
+    // get date result
+    $tmp = (isset($_POST['dateResult']) ? $_POST['dateResult'] : null);    
+    $dateResult = date('Y-m-d', strtotime($tmp));
+
+    // get account
+
+    // get result
+    $result = (isset($_POST['result']) ? $_POST['result'] : null);
+    
+    /*
+    echo $schoolID, '<br>';
+    echo $term, '<br>';
+    echo $dateSub, '<br>';
+    echo $dateResult, '<br>';
+    echo $result, '<br>';
+    */
+
+    }
+
+  ?>
 
 <html lang="en">
 <head>
@@ -71,6 +121,10 @@
               <?php } 
             ?>
           </datalist><br>
+          Term: <select name="term">
+                  <option value="Fall 2017">Fall 2017</option>
+                  <option value="Spring 2017">Spring 2017</option>
+                </select><br>
           Date of submission: <input type="date" name="dateSub"><br>
           Date of result: <input type="date" name="dateResult"><br>
           Result: <select name="result">
@@ -99,9 +153,8 @@
 <?php
 
 /* Add an applicant to the table. */
-function AddApplication($connection, $schoolName, $programName, $term, $dateSub, $dateResult, $account, $result) {
+function AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $account, $result) {
     # $clean_account = mysqli_real_escape_string($connection, $account);
-    # use SQL query to get schoolID, programID, by schoolName, programName
 
     $query = "INSERT INTO `Application` (`schoolID`, `programID`, `term`, `dateSub`, `dateResult`, `applicantID`, `result`)
               VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$account', '$result');";
