@@ -62,16 +62,20 @@
     // get result
     $result = (isset($_POST['result']) ? $_POST['result'] : null);
     
-    /*
+    
     echo $schoolID, '<br>';
     echo $term, '<br>';
     echo $dateSub, '<br>';
     echo $dateResult, '<br>';
     echo $result, '<br>';
-    */
-
+    
+    // print the message using javascript and jump to index page
+    $_POST = array();
+    echo "<script type=\"text/javascript\">
+            alert(\"Thanks for your submission!\")
+            location = \"index.php\"
+          </script>";
     }
-
   ?>
 
 <html lang="en">
@@ -87,7 +91,7 @@
     <header>
       <nav class="website-nav">
         <ul>
-          <li><a class="home-link" href="index.html">Home</a></li>
+          <li><a class="home-link" href="index.php">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>

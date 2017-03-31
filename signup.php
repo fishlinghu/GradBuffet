@@ -1,4 +1,5 @@
 <?php
+  session_start();
   include "dbinfo.inc";
   include "checkTable.php";
   error_reporting(E_ALL);
@@ -42,6 +43,12 @@
       $applicant_gmat,
       $applicant_foreign_student,
       $applicant_num_pub);
+
+    $_POST = array();
+    echo "<script type=\"text/javascript\">
+            alert(\"Thanks for your registration!\")
+            location = \"index.php\"
+          </script>";
   }
 
 ?>
@@ -57,7 +64,7 @@
     <header>
       <nav class="website-nav">
         <ul>
-          <li><a class="home-link" href="index.html">Home</a></li>
+          <li><a class="home-link" href="index.php">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>

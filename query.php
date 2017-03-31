@@ -44,7 +44,7 @@
     <header>
       <nav class="website-nav">
         <ul>
-          <li><a class="home-link" href="index.html">Home</a></li>
+          <li><a class="home-link" href="index.php">Home</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
