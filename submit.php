@@ -46,6 +46,9 @@
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
   $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
   $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
+  //echo $schoolname;
+  //echo $programdegree;
+  //echo $programmajor;
   if (strlen($schoolname) && strlen($programdegree) && strlen($programmajor)) 
     {
     // should we use degree level + program major?
@@ -62,15 +65,15 @@
       }
     
     // get programID
-    /*
-    $programID = findProgramID($connection, $programname, $schoolID);
+    
+    $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
     if( $programID == NULL)
       { 
       // new program, we have to create a entry in the Program table
-      AddProgram($connection, $programname, $schoolID);
-      $programID = findProgramID($connection, $programname, $schoolID);
+      AddProgram($connection, $programdegree, $programmajor, $schoolID);
+      $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
       }
-    */
+    
     // get term
     $term = (isset($_POST['term']) ? $_POST['term'] : null);
 
@@ -144,7 +147,7 @@
           </datalist><br>
 
           <label for="pdegree">Program Name: </label>
-          <input type="text" list="degreename" autocomplete="off" name="degreename">
+          <input type="text" list="degreename" autocomplete="off" name="pdegree">
           <datalist id="degreename">
             <?php
             while($row = mysqli_fetch_array($degreeList)) 
@@ -155,7 +158,7 @@
           </datalist>
 
           <label for="pmajor"> in </label>
-          <input type="text" list="majorname" autocomplete="off" name="majorname">
+          <input type="text" list="majorname" autocomplete="off" name="pmajor">
           <datalist id="majorname">
             <?php
             while($row = mysqli_fetch_array($majorList)) 
@@ -172,8 +175,8 @@
           Date of submission: <input type="date" name="dateSub"><br>
           Date of result: <input type="date" name="dateResult"><br>
           Result: <select name="result">
-                    <option value=0>Rejected</option>
                     <option value=1>Admitted</option>
+                    <option value=0>Rejected</option>
                   </select><br>
           <input type="submit">
         </form>
@@ -213,9 +216,9 @@ function AddSchool($connection, $schoolname){
 }
 
 /* Add a new program to the table */
-function AddProgram($connection, $programname, $schoolID){
-  $sql = "INSERT INTO `Program` (`name`, `school_ID`)
-          VALUES ('$programname' '$schoolID');";
+function AddProgram($connection, $programdegree, $programmajor, $schoolID){
+  $sql = "INSERT INTO `Program` (`degree`, `major`, `school_ID`)
+          VALUES ('$programdegree', '$programmajor', '$schoolID');";
   if(!mysqli_query($connection, $sql)) echo("Error adding program.". mysqli_error($connection));
 }
 
@@ -229,12 +232,14 @@ function findSchoolID($connection, $schoolname){
   return $schoolID;
 }
 /* map program name to program ID */
-function findProgramID($connection, $programname, $schoolID){
-  $sql = "SELECT ID, name, school_ID FROM Program 
-            WHERE name = '$programname' AND school_ID = '$schoolID'";
+
+function findProgramID($connection, $programdegree, $programmajor, $schoolID){
+  $sql = "SELECT ID, degree, major, school_ID FROM Program 
+            WHERE degree = '$programdegree' AND major = '$programmajor' AND school_ID = '$schoolID'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   $sqlReturn = mysqli_fetch_array( $sqlReturn );
   $programID = $sqlReturn['ID'];
   return $programID;
 }
+
 ?>
