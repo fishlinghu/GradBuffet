@@ -98,7 +98,7 @@
     echo $dateResult, '<br>';
     echo $result, '<br>';
     */
-    // AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
+    AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
     // print the message using javascript and jump to index page
     $_POST = array();
     echo "<script type=\"text/javascript\">

@@ -31,16 +31,22 @@
   $sql = "SELECT name FROM School";
   $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-  $sql = "SELECT name FROM Program";
-  $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sql = "SELECT DISTINCT(degree) FROM Program";
+  $degreeList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+
+  $sql = "SELECT DISTINCT(major) FROM Program";
+  $majorList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
   // get the query parameters sent by user through POST
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
-  $programname = (isset($_POST['pname']) ? $_POST['pname'] : null);
+  $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
+  $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
+  $term = (isset($_POST['term']) ? $_POST['term'] : null);
   $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
   $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
   // use those parameters to do the query
-  $sql = "SELECT * FROM application"; 
+  $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
+  print_r($application);
 ?>
 <head>
   <meta charset="utf-8">
@@ -78,16 +84,28 @@
             ?>
           </datalist><br>
 
-          <label for="pname">Program Name</label>
-          <input type="text" list="programname" autocomplete="off" name="pname">
-          <datalist id="programname">
+          <label for="pdegree">Program Name: </label>
+          <input type="text" list="degreename" autocomplete="off" name="pdegree">
+          <datalist id="degreename">
             <?php
-            while($row = mysqli_fetch_array($programList)) 
+            while($row = mysqli_fetch_array($degreeList)) 
               { ?>
-              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <option value="<?php echo $row['degree']; ?>"><?php echo $row['degree']; ?></option>
+              <?php } 
+            ?>
+          </datalist>
+
+          <label for="pmajor"> in </label>
+          <input type="text" list="majorname" autocomplete="off" name="pmajor">
+          <datalist id="majorname">
+            <?php
+            while($row = mysqli_fetch_array($majorList)) 
+              { ?>
+              <option value="<?php echo $row['major']; ?>"><?php echo $row['major']; ?></option>
               <?php } 
             ?>
           </datalist><br>
+
           Term: <select name="term">
                   <option value="Fall 2017">Fall 2017</option>
                   <option value="Spring 2017">Spring 2017</option>
@@ -119,5 +137,36 @@
 </body>
 </html>
 <?php
-/* Check for the existence of a table. */
+/* map school name to school ID */
+function findSchoolID($connection, $schoolname){
+  $sql = "SELECT ID, name FROM School 
+            WHERE name = '$schoolname'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $schoolID = $sqlReturn['ID'];
+  return $schoolID;
+}
+
+/* map program name to program ID */
+function findProgramID($connection, $programdegree, $programmajor, $schoolID){
+  $sql = "SELECT ID, degree, major, school_ID FROM Program 
+            WHERE degree = '$programdegree' AND major = '$programmajor' AND school_ID = '$schoolID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $programID = $sqlReturn['ID'];
+  return $programID;
+}
+
+/* find application */
+function findApplication($connection, $programdegree, $programmajor, $schoolname, $term){
+  $schoolID = findSchoolID($connection, $schoolname);
+  $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
+
+  $sql = "SELECT * FROM Application
+            WHERE programID = '$programID' AND schoolID = '$schoolID' AND term = '$term'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+
+  return $sqlReturn;
+}
 ?>
