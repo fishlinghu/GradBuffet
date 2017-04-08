@@ -81,7 +81,7 @@
     <div class="message">
       <div class="text">
         <h1>GradBuffet</h1>
-        <p>Sign in here:</p>
+        <p>Sign in first to submit your result</p>
       </div>
     </div>
     <div class="push"></div>

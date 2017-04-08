@@ -36,32 +36,41 @@
   $sql = "SELECT name FROM School";
   $schoolList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-  $sql = "SELECT name FROM Program";
-  $programList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sql = "SELECT DISTINCT(degree) FROM Program";
+  $degreeList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+
+  $sql = "SELECT DISTINCT(major) FROM Program";
+  $majorList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
   // get the query parameters sent by user through POST
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
-  $programname = (isset($_POST['pname']) ? $_POST['pname'] : null);
-  if (strlen($schoolname) && strlen($programname)) 
+  $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
+  $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
+  if (strlen($schoolname) && strlen($programdegree) && strlen($programmajor)) 
     {
     // should we use degree level + program major?
     //echo $schoolname;
     //echo $programname;
     
     // get schoolID
-    $sql = "SELECT ID, name FROM School 
-            WHERE name = '$schoolname'";
-    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-    $sqlReturn = mysqli_fetch_array( $sqlReturn );
-    $schoolID = $sqlReturn['ID'];
+    $schoolID = findSchoolID($connection, $schoolname);
+    if( $schoolID == NULL)
+      { 
+      // new school, we have to create a entry in the School table
+      AddSchool($connection, $schoolname);
+      $schoolID = findSchoolID($connection, $schoolname);
+      }
     
     // get programID
-    $sql = "SELECT ID, name, school_ID FROM Program 
-            WHERE name = '$programname' AND school_ID = '$schoolID'";
-    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-    $sqlReturn = mysqli_fetch_array( $sqlReturn );
-    $programID = $sqlReturn['ID'];
-
+    /*
+    $programID = findProgramID($connection, $programname, $schoolID);
+    if( $programID == NULL)
+      { 
+      // new program, we have to create a entry in the Program table
+      AddProgram($connection, $programname, $schoolID);
+      $programID = findProgramID($connection, $programname, $schoolID);
+      }
+    */
     // get term
     $term = (isset($_POST['term']) ? $_POST['term'] : null);
 
@@ -86,13 +95,14 @@
     echo $dateResult, '<br>';
     echo $result, '<br>';
     */
-    AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
+    // AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
     // print the message using javascript and jump to index page
     $_POST = array();
     echo "<script type=\"text/javascript\">
             alert(\"Thanks for your submission!\")
-            location = \"index.php\"
+            
           </script>";
+    //location = \"index.php\"
     }
   ?>
 
@@ -133,16 +143,28 @@
             ?>
           </datalist><br>
 
-          <label for="pname">Program Name</label>
-          <input type="text" list="programname" autocomplete="off" name="pname">
-          <datalist id="programname">
+          <label for="pdegree">Program Name: </label>
+          <input type="text" list="degreename" autocomplete="off" name="degreename">
+          <datalist id="degreename">
             <?php
-            while($row = mysqli_fetch_array($programList)) 
+            while($row = mysqli_fetch_array($degreeList)) 
               { ?>
-              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <option value="<?php echo $row['degree']; ?>"><?php echo $row['degree']; ?></option>
+              <?php } 
+            ?>
+          </datalist>
+
+          <label for="pmajor"> in </label>
+          <input type="text" list="majorname" autocomplete="off" name="majorname">
+          <datalist id="majorname">
+            <?php
+            while($row = mysqli_fetch_array($majorList)) 
+              { ?>
+              <option value="<?php echo $row['major']; ?>"><?php echo $row['major']; ?></option>
               <?php } 
             ?>
           </datalist><br>
+
           Term: <select name="term">
                   <option value="Fall 2017">Fall 2017</option>
                   <option value="Spring 2017">Spring 2017</option>
@@ -182,5 +204,37 @@ function AddApplication($connection, $schoolID, $programID, $term, $dateSub, $da
               VALUES ('$schoolID', '$programID', '$term', '$dateSub', '$dateResult', '$applicantID', '$result');";
 
     if(!mysqli_query($connection, $query)) echo("Error adding application data.". mysqli_error($connection));
+}
+/* Add a new school to the table */
+function AddSchool($connection, $schoolname){
+  $sql = "INSERT INTO `School` (`name`)
+          VALUES ('$schoolname');";
+  if(!mysqli_query($connection, $sql)) echo("Error adding school.". mysqli_error($connection));
+}
+
+/* Add a new program to the table */
+function AddProgram($connection, $programname, $schoolID){
+  $sql = "INSERT INTO `Program` (`name`, `school_ID`)
+          VALUES ('$programname' '$schoolID');";
+  if(!mysqli_query($connection, $sql)) echo("Error adding program.". mysqli_error($connection));
+}
+
+/* map school name to school ID */
+function findSchoolID($connection, $schoolname){
+  $sql = "SELECT ID, name FROM School 
+            WHERE name = '$schoolname'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $schoolID = $sqlReturn['ID'];
+  return $schoolID;
+}
+/* map program name to program ID */
+function findProgramID($connection, $programname, $schoolID){
+  $sql = "SELECT ID, name, school_ID FROM Program 
+            WHERE name = '$programname' AND school_ID = '$schoolID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $programID = $sqlReturn['ID'];
+  return $programID;
 }
 ?>

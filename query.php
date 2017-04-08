@@ -6,7 +6,17 @@
 ?>
 <html lang="en">
 <?php
-
+  // create the log out / log in button at top left corner
+  if(isset($_SESSION['applicantID']) && $_SESSION['applicantID'] != null)
+    { 
+    // user has logged in
+    echo "<a href=\"logout.php\">Logout</a>";
+    }
+  else
+    {
+    // user did not log in
+    echo "<a href=\"login.php\">Login</a>";
+    }
   /* Connect to MySQL and select the database. */
   $connection = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
 
@@ -55,8 +65,8 @@
     </header>
     <section class="page-content">
       <article>
-        <h1>User make query here</h1>
         <form action='query.php' method='post'>
+        <h2>Search For Application</h2>
           <label for="sname">School Name</label>
           <input type="text" list="schoolname" autocomplete="off" name="sname">
           <datalist id="schoolname">
@@ -78,12 +88,22 @@
               <?php } 
             ?>
           </datalist><br>
-          Lower bound of GPA: <input type="number" name="L_GPA" value="0.0" step = 0.1><br>
-          Upper bound of GPA: <input type="number" name="U_GPA" value="4.0" step = 0.1><br>
-          <br><input type='submit' name = 'submit' value='submit'/>
+          Term: <select name="term">
+                  <option value="Fall 2017">Fall 2017</option>
+                  <option value="Spring 2017">Spring 2017</option>
+                </select><br>
+          <input type='submit' name = 'submit' value='Look for Applications'/>
+        
+        <br><br>
+        <h2>Search For Program</h2>
+          GPA: <input type="number" name="L_GPA" value="0.0" step = 0.1> ~ <input type="number" name="U_GPA" value="4.0" step = 0.1><br>
+          TOEFL: <input type="number" name="L_TOEFL" value="0" step = 1> ~ <input type="number" name="U_TOEFL" value="120" step = 1><br>
+          GRE Q: <input type="number" name="L_GREQ" value="0" step = 1> ~ <input type="number" name="U_GREQ" value="170" step = 1><br>
+          GRE V: <input type="number" name="L_GREV" value="0" step = 1> ~ <input type="number" name="U_GREV" value="170" step = 1><br>
+          GMAT: <input type="number" name="L_GMAT" value="0" step = 1> ~ <input type="number" name="U_GMAT" value="900" step = 1><br>
+          Admission rate: <input type="number" name="L_AdRate" value="0.00" step = 0.01> ~ <input type="number" name="U_AdRate" value="1.00" step = 0.01><br>
+          <input type='submit' name = 'submit' value='Look for Programs'/>
         </form>
-
-        <p>Search by average GPA</p>
       </article>
     </section>
     <div class="push"></div>
