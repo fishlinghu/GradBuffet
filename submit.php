@@ -259,37 +259,40 @@ function updateProgram($connection, $programID, $applicantID, $result){
   $temp_total_count = $programData['total_count'] + 1;
 
   if($result == 1){
+    // admitted
     $temp_ad_count = $programData['ad_count'] + 1;
+    if($applicantData['foreign_student'] == 1){
+      $temp_foreign_count = $programData['foreign_count'] + 1;
+    }
+    else{
+      $temp_foreign_count = $programData['foreign_count'];
+    }
+    $tempGPA = ($programData['avgGPA'] * $programData['ad_count'] + $applicantData['gpa']) / $temp_ad_count;
+    $tempTOEFL = ($programData['avgTOEFL'] * $programData['ad_count'] + $applicantData['toefl']) / $temp_ad_count;
+    $tempGREV = ($programData['avgGREV'] * $programData['ad_count'] + $applicantData['greV']) / $temp_ad_count;
+    $tempGREQ = ($programData['avgGREQ'] * $programData['ad_count'] + $applicantData['greQ']) / $temp_ad_count;
+    $tempGREAWA = ($programData['avgGREAWA'] * $programData['ad_count'] + $applicantData['greAWA']) / $temp_ad_count;
+    $tempGMAT = ($programData['avgGMAT'] * $programData['ad_count'] + $applicantData['gmat']) / $temp_ad_count;
+    # update the program data
+    $sql = "UPDATE Program 
+            SET avgGPA = $tempGPA,
+                avgTOEFL = $tempTOEFL,
+                avgGREV = $tempGREV,
+                avgGREQ = $tempGREQ,
+                avgGREAWA = $tempGREAWA,
+                avgGMAT = $tempGMAT,
+                foreign_count = $temp_foreign_count,
+                ad_count = $temp_ad_count,
+                total_count = $temp_total_count 
+            WHERE ID = $programID";
+    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   }
   else{
-    $temp_ad_count = $programData['ad_count'];
-  }
-
-  if($applicantData['foreign_student'] == 1){
-    $temp_foreign_count = $programData['foreign_count'] + 1;
-  }
-  else{
-    $temp_foreign_count = $programData['foreign_count'];
-  }
-  $tempGPA = ($programData['avgGPA'] * $programData['total_count'] + $applicantData['gpa']) / $temp_total_count;
-  $tempTOEFL = ($programData['avgTOEFL'] * $programData['total_count'] + $applicantData['toefl']) / $temp_total_count;
-  $tempGREV = ($programData['avgGREV'] * $programData['total_count'] + $applicantData['greV']) / $temp_total_count;
-  $tempGREQ = ($programData['avgGREQ'] * $programData['total_count'] + $applicantData['greQ']) / $temp_total_count;
-  $tempGREAWA = ($programData['avgGREAWA'] * $programData['total_count'] + $applicantData['greAWA']) / $temp_total_count;
-  $tempGMAT = ($programData['avgGMAT'] * $programData['total_count'] + $applicantData['gmat']) / $temp_total_count;
-
-  # update the program data
-  $sql = "UPDATE Program 
-          SET avgGPA = $tempGPA,
-              avgTOEFL = $tempTOEFL,
-              avgGREV = $tempGREV,
-              avgGREQ = $tempGREQ,
-              avgGREAWA = $tempGREAWA,
-              avgGMAT = $tempGMAT,
-              foreign_count = $temp_foreign_count,
-              ad_count = $temp_ad_count,
-              total_count = $temp_total_count 
+    // rejected, update only total count
+    $sql = "UPDATE Program 
+            SET total_count = $temp_total_count
           WHERE ID = $programID";
-  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+    $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  }
 }
 ?>

@@ -45,8 +45,16 @@
   $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
   $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
   // use those parameters to do the query
-  $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
-  print_r($application);
+  if($_POST['submit'] == 'Look for Applications'){
+    $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
+    print_r($application);  
+  }
+  else if($_POST['submit'] == 'Look for Programs'){
+    $program = findProgram($connection);
+    print_r($program);
+    //echo "Look for program";
+  }
+  
 ?>
 <head>
   <meta charset="utf-8">
@@ -162,11 +170,25 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
   $schoolID = findSchoolID($connection, $schoolname);
   $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
 
+  if($schoolID == null && $programID == null){
+    echo "<script type=\"text/javascript\">
+            alert(\"Please enter something!\")
+          </script>";
+    return;
+  }
+
   $sql = "SELECT * FROM Application
-            WHERE programID = '$programID' AND schoolID = '$schoolID' AND term = '$term'";
+            WHERE (programID = '$programID' OR '$programID' = '') 
+              AND (schoolID = '$schoolID' OR '$schoolID' = '') 
+              AND term = '$term'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   $sqlReturn = mysqli_fetch_array( $sqlReturn );
 
   return $sqlReturn;
+}
+
+/* find program */
+function findProgram($connection){
+
 }
 ?>
