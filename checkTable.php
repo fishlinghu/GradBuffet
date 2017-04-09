@@ -66,6 +66,7 @@ function VerifyTable($connection, $dbName)
           `avgGREQ` FLOAT(4,1) DEFAULT 0,
           `avgGREAWA` FLOAT(3,2) DEFAULT 0,
           `avgGMAT` FLOAT(4,1) DEFAULT 0,
+          `foreign_count` INT DEFAULT 0,
           `ad_count` INT DEFAULT 0,
           `total_count` INT DEFAULT 0,
           `school_ID` int(11) DEFAULT NULL,

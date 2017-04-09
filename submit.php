@@ -264,6 +264,13 @@ function updateProgram($connection, $programID, $applicantID, $result){
   else{
     $temp_ad_count = $programData['ad_count'];
   }
+
+  if($applicantData['foreign_student'] == 1){
+    $temp_foreign_count = $programData['foreign_count'] + 1;
+  }
+  else{
+    $temp_foreign_count = $programData['foreign_count'];
+  }
   $tempGPA = ($programData['avgGPA'] * $programData['total_count'] + $applicantData['gpa']) / $temp_total_count;
   $tempTOEFL = ($programData['avgTOEFL'] * $programData['total_count'] + $applicantData['toefl']) / $temp_total_count;
   $tempGREV = ($programData['avgGREV'] * $programData['total_count'] + $applicantData['greV']) / $temp_total_count;
@@ -279,6 +286,7 @@ function updateProgram($connection, $programID, $applicantID, $result){
               avgGREQ = $tempGREQ,
               avgGREAWA = $tempGREAWA,
               avgGMAT = $tempGMAT,
+              foreign_count = $temp_foreign_count,
               ad_count = $temp_ad_count,
               total_count = $temp_total_count 
           WHERE ID = $programID";
