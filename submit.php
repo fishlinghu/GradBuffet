@@ -51,7 +51,6 @@
   //echo $programmajor;
   if (strlen($schoolname) && strlen($programdegree) && strlen($programmajor)) 
     {
-    // should we use degree level + program major?
     //echo $schoolname;
     //echo $programname;
     
@@ -65,7 +64,6 @@
       }
     
     // get programID
-    
     $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
     if( $programID == NULL)
       { 
@@ -99,6 +97,8 @@
     echo $result, '<br>';
     */
     AddApplication($connection, $schoolID, $programID, $term, $dateSub, $dateResult, $applicantID, $result);
+
+    updateProgram($connection, $programID, $applicantID, $result);
     // print the message using javascript and jump to index page
     $_POST = array();
     echo "<script type=\"text/javascript\">
@@ -208,6 +208,7 @@ function AddApplication($connection, $schoolID, $programID, $term, $dateSub, $da
 
     if(!mysqli_query($connection, $query)) echo("Error adding application data.". mysqli_error($connection));
 }
+
 /* Add a new school to the table */
 function AddSchool($connection, $schoolname){
   $sql = "INSERT INTO `School` (`name`)
@@ -231,8 +232,8 @@ function findSchoolID($connection, $schoolname){
   $schoolID = $sqlReturn['ID'];
   return $schoolID;
 }
-/* map program name to program ID */
 
+/* map program name to program ID */
 function findProgramID($connection, $programdegree, $programmajor, $schoolID){
   $sql = "SELECT ID, degree, major, school_ID FROM Program 
             WHERE degree = '$programdegree' AND major = '$programmajor' AND school_ID = '$schoolID'";
@@ -242,4 +243,45 @@ function findProgramID($connection, $programdegree, $programmajor, $schoolID){
   return $programID;
 }
 
+/* update the statistic data of the program */
+function updateProgram($connection, $programID, $applicantID, $result){
+  // get the data of the applicant
+  $sql = "SELECT * FROM Applicant WHERE ID = '$applicantID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $applicantData = mysqli_fetch_array( $sqlReturn );
+
+  // get the data of the program
+  $sql = "SELECT * FROM Program WHERE ID = '$programID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $programData = mysqli_fetch_array( $sqlReturn );
+
+  
+  $temp_total_count = $programData['total_count'] + 1;
+
+  if($result == 1){
+    $temp_ad_count = $programData['ad_count'] + 1;
+  }
+  else{
+    $temp_ad_count = $programData['ad_count'];
+  }
+  $tempGPA = ($programData['avgGPA'] * $programData['total_count'] + $applicantData['gpa']) / $temp_total_count;
+  $tempTOEFL = ($programData['avgTOEFL'] * $programData['total_count'] + $applicantData['toefl']) / $temp_total_count;
+  $tempGREV = ($programData['avgGREV'] * $programData['total_count'] + $applicantData['greV']) / $temp_total_count;
+  $tempGREQ = ($programData['avgGREQ'] * $programData['total_count'] + $applicantData['greQ']) / $temp_total_count;
+  $tempGREAWA = ($programData['avgGREAWA'] * $programData['total_count'] + $applicantData['greAWA']) / $temp_total_count;
+  $tempGMAT = ($programData['avgGMAT'] * $programData['total_count'] + $applicantData['gmat']) / $temp_total_count;
+
+  # update the program data
+  $sql = "UPDATE Program 
+          SET avgGPA = $tempGPA,
+              avgTOEFL = $tempTOEFL,
+              avgGREV = $tempGREV,
+              avgGREQ = $tempGREQ,
+              avgGREAWA = $tempGREAWA,
+              avgGMAT = $tempGMAT,
+              ad_count = $temp_ad_count,
+              total_count = $temp_total_count 
+          WHERE ID = $programID";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+}
 ?>
