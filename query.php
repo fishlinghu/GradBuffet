@@ -42,17 +42,33 @@
   $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
   $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
   $term = (isset($_POST['term']) ? $_POST['term'] : null);
-  $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
-  $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
   // use those parameters to do the query
-  if($_POST['submit'] == 'Look for Applications'){
-    $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
-    print_r($application);  
-  }
-  else if($_POST['submit'] == 'Look for Programs'){
-    $program = findProgram($connection);
-    print_r($program);
-    //echo "Look for program";
+  if(isset($_POST['submit'])){
+    if($_POST['submit'] == 'Look for Applications'){
+      $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
+      print_r($application);  
+    }
+    else if($_POST['submit'] == 'Look for Programs'){
+      $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
+      $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
+      $L_TOEFL = (isset($_POST['L_TOEFL']) ? $_POST['L_TOEFL'] : null);
+      $U_TOEFL = (isset($_POST['U_TOEFL']) ? $_POST['U_TOEFL'] : null);
+      $L_GREQ = (isset($_POST['L_GREQ']) ? $_POST['L_GREQ'] : null);
+      $U_GREQ = (isset($_POST['U_GREQ']) ? $_POST['U_GREQ'] : null);
+      $L_GREV = (isset($_POST['L_GREV']) ? $_POST['L_GREV'] : null);
+      $U_GREV = (isset($_POST['U_GREV']) ? $_POST['U_GREV'] : null);
+      $L_GREAWA = (isset($_POST['L_GREAWA']) ? $_POST['L_GREAWA'] : null);
+      $U_GREAWA = (isset($_POST['U_GREAWA']) ? $_POST['U_GREAWA'] : null);
+      $L_GMAT = (isset($_POST['L_GMAT']) ? $_POST['L_GMAT'] : null);
+      $U_GMAT = (isset($_POST['U_GMAT']) ? $_POST['U_GMAT'] : null);
+      $L_AdRate = (isset($_POST['L_AdRate']) ? $_POST['L_AdRate'] : null);
+      $U_AdRate = (isset($_POST['U_AdRate']) ? $_POST['U_AdRate'] : null);
+      $L_ForeignRate = (isset($_POST['L_ForeignRate']) ? $_POST['L_ForeignRate'] : null);
+      $U_ForeignRate = (isset($_POST['U_ForeignRate']) ? $_POST['U_ForeignRate'] : null);
+      $program = findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate);
+      print_r($program);
+      //echo "Look for program";
+    }
   }
   
 ?>
@@ -122,12 +138,46 @@
         
         <br><br>
         <h2>Search For Program</h2>
+          <label for="sname">School Name: </label>
+          <input type="text" list="schoolname" autocomplete="off" name="sname">
+          <datalist id="schoolname">
+            <?php
+            while($row = mysqli_fetch_array($schoolList)) 
+              { ?>
+              <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+              <?php } 
+            ?>
+          </datalist><br>
+
+          <label for="pdegree">Degree level: </label>
+          <input type="text" list="degreename" autocomplete="off" name="pdegree">
+          <datalist id="degreename">
+            <?php
+            while($row = mysqli_fetch_array($degreeList)) 
+              { ?>
+              <option value="<?php echo $row['degree']; ?>"><?php echo $row['degree']; ?></option>
+              <?php } 
+            ?>
+          </datalist><br>
+
+          <label for="pmajor">Major: </label>
+          <input type="text" list="majorname" autocomplete="off" name="pmajor">
+          <datalist id="majorname">
+            <?php
+            while($row = mysqli_fetch_array($majorList)) 
+              { ?>
+              <option value="<?php echo $row['major']; ?>"><?php echo $row['major']; ?></option>
+              <?php } 
+            ?>
+          </datalist><br>
           GPA: <input type="number" name="L_GPA" value="0.0" step = 0.1> ~ <input type="number" name="U_GPA" value="4.0" step = 0.1><br>
           TOEFL: <input type="number" name="L_TOEFL" value="0" step = 1> ~ <input type="number" name="U_TOEFL" value="120" step = 1><br>
           GRE Q: <input type="number" name="L_GREQ" value="0" step = 1> ~ <input type="number" name="U_GREQ" value="170" step = 1><br>
           GRE V: <input type="number" name="L_GREV" value="0" step = 1> ~ <input type="number" name="U_GREV" value="170" step = 1><br>
+          GRE AWA: <input type="number" name="L_GREAWA" value="0.0" step = 1> ~ <input type="number" name="U_GREAWA" value="6.0" step = 0.5><br>
           GMAT: <input type="number" name="L_GMAT" value="0" step = 1> ~ <input type="number" name="U_GMAT" value="900" step = 1><br>
           Admission rate: <input type="number" name="L_AdRate" value="0.00" step = 0.01> ~ <input type="number" name="U_AdRate" value="1.00" step = 0.01><br>
+          Foreign students rate: <input type="number" name="L_ForeignRate" value="0.00" step = 0.01> ~ <input type="number" name="U_ForeignRate" value="1.00" step = 0.01><br>
           <input type='submit' name = 'submit' value='Look for Programs'/>
         </form>
       </article>
@@ -188,7 +238,24 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
 }
 
 /* find program */
-function findProgram($connection){
+function findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate){
+  $schoolID = findSchoolID($connection, $schoolname);
+  $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
 
+  $sql = "SELECT * FROM Program
+            WHERE (ID = '$programID' OR '$programID' = '') 
+              AND (school_ID = '$schoolID' OR '$schoolID' = '') 
+              AND (avgGPA >= $L_GPA AND avgGPA <= $U_GPA)
+              AND (avgTOEFL >= $L_TOEFL AND avgTOEFL <= $U_TOEFL)
+              AND (avgGREV >= $L_GREV AND avgGREV <= $U_GREV)
+              AND (avgGREQ >= $L_GREQ AND avgGREQ <= $U_GREQ)
+              AND (avgGREAWA >= $L_GREAWA AND avgGREAWA <= $U_GREAWA)
+              AND (avgGMAT >= $L_GMAT AND avgGMAT <= $U_GMAT)
+              AND (ad_count/total_count >= $L_AdRate AND ad_count/total_count <= $U_AdRate)
+              AND (foreign_count/total_count >= $L_ForeignRate AND foreign_count/total_count <= $U_ForeignRate)";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+
+  return $sqlReturn;
 }
 ?>
