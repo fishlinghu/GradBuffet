@@ -66,12 +66,23 @@
       $L_ForeignRate = (isset($_POST['L_ForeignRate']) ? $_POST['L_ForeignRate'] : null);
       $U_ForeignRate = (isset($_POST['U_ForeignRate']) ? $_POST['U_ForeignRate'] : null);
       $program = findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate);
-      print_r($program);
-      //echo "Look for program";
+      
+      //echo $program['major'];
+      //echo $program['degree'];
     }
   }
   
 ?>
+<style>
+  .fancytable{border:1px solid #cccccc; width:100%;border-collapse:collapse;}
+  .fancytable td{border:1px solid #cccccc; color:#555555;text-align:center;line-height:28px;}
+  .headerrow{ background-color:#555555;}
+  .headerrow td{ color:#ffffff; text-align:center;}
+  .datarowodd{background-color:#ffa64d;}
+  .dataroweven{ background-color:#efefef;}
+  .datarowodd td{background-color:#ffa64d;}
+  .dataroweven td{ background-color:#efefef;}
+</style>
 <head>
   <meta charset="utf-8">
   <title>Grad Buffet - Make a Query</title>
@@ -180,6 +191,39 @@
           Foreign students rate: <input type="number" name="L_ForeignRate" value="0.00" step = 0.01> ~ <input type="number" name="U_ForeignRate" value="1.00" step = 0.01><br>
           <input type='submit' name = 'submit' value='Look for Programs'/>
         </form>
+
+        <br><br>
+        <h2>Result</h2>
+        <table class="fancytable">
+          <tr class="headerrow">
+            <th>School</th>
+            <th>Degree</th>
+            <th>Major</th> 
+            <th>GPA</th>
+            <th>TOEFL</th>
+            <th>GRE(Q/V/AWA)</th>
+            <th>GMAT</th>
+            <th>AD rate</th>
+            <th>Foreign rate</th>
+          </tr>
+          <?php 
+            
+            while($row = mysqli_fetch_array($program))
+              {
+              echo "<tr class=\"datarowodd\">";
+              echo "<td>Georgia Institute of Technology</td>"; // need to get school name
+              echo "<td>".$row["degree"]."</td>";
+              echo "<td>".$row["major"]."</td>";
+              echo "<td>".$row["avgGPA"]."</td>";
+              echo "<td>".$row["avgTOEFL"]."</td>";
+              echo "<td>".$row["avgGREQ"]."/".$row["avgGREV"]."/".$row["avgGREAWA"]."</td>";
+              echo "<td>".$row["avgGMAT"]."</td>";
+              echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
+              echo "<td>".intval(100*$row["foreign_count"]/$row["ad_count"])."%</td>";
+              echo "</tr>";
+              }
+          ?>
+        </table>
       </article>
     </section>
     <div class="push"></div>
@@ -232,7 +276,7 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
               AND (schoolID = '$schoolID' OR '$schoolID' = '') 
               AND term = '$term'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  //$sqlReturn = mysqli_fetch_array( $sqlReturn );
 
   return $sqlReturn;
 }
@@ -254,7 +298,7 @@ function findProgram($connection, $programdegree, $programmajor, $schoolname, $U
               AND (ad_count/total_count >= $L_AdRate AND ad_count/total_count <= $U_AdRate)
               AND (foreign_count/total_count >= $L_ForeignRate AND foreign_count/total_count <= $U_ForeignRate)";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  //$sqlReturn = mysqli_fetch_array( $sqlReturn );
 
   return $sqlReturn;
 }
