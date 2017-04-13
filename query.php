@@ -210,8 +210,9 @@
             
             while($row = mysqli_fetch_array($program))
               {
+              $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
               echo "<tr class=\"datarowodd\">";
-              echo "<td>Georgia Institute of Technology</td>"; // need to get school name
+              echo "<td>".$tempSchoolName."</td>"; // need to get school name
               echo "<td>".$row["degree"]."</td>";
               echo "<td>".$row["major"]."</td>";
               echo "<td>".$row["avgGPA"]."</td>";
@@ -252,11 +253,15 @@ function findSchoolID($connection, $schoolname){
 /* map program name to program ID */
 function findProgramID($connection, $programdegree, $programmajor, $schoolID){
   $sql = "SELECT ID, degree, major, school_ID FROM Program 
-            WHERE degree = '$programdegree' AND major = '$programmajor' AND school_ID = '$schoolID'";
+            WHERE (degree = '$programdegree' OR '$programdegree' = '')
+              AND (major = '$programmajor' OR '$programmajor' = '')
+              AND (school_ID = '$schoolID' OR '$schoolID' = '')";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-  $sqlReturn = mysqli_fetch_array( $sqlReturn );
-  $programID = $sqlReturn['ID'];
-  return $programID;
+  $retArray = array();
+  while($row = mysqli_fetch_assoc( $sqlReturn )){
+    array_push($retArray, $row['ID']);
+  }
+  return $retArray;
 }
 
 /* find application */
@@ -285,9 +290,10 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
 function findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate){
   $schoolID = findSchoolID($connection, $schoolname);
   $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
-
+  $programIDStr = implode(',',$programID);
+  //echo $programIDStr;
   $sql = "SELECT * FROM Program
-            WHERE (ID = '$programID' OR '$programID' = '') 
+            WHERE (ID IN ($programIDStr) OR '$programIDStr' = '') 
               AND (school_ID = '$schoolID' OR '$schoolID' = '') 
               AND (avgGPA >= $L_GPA AND avgGPA <= $U_GPA)
               AND (avgTOEFL >= $L_TOEFL AND avgTOEFL <= $U_TOEFL)
@@ -301,5 +307,15 @@ function findProgram($connection, $programdegree, $programmajor, $schoolname, $U
   //$sqlReturn = mysqli_fetch_array( $sqlReturn );
 
   return $sqlReturn;
+}
+
+/* find school name */
+function findSchoolName($connection, $schoolID){
+  $sql = "SELECT ID, name FROM School 
+            WHERE ID = '$schoolID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $schoolname = $sqlReturn['name'];
+  return $schoolname;
 }
 ?>
