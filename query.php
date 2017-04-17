@@ -37,6 +37,9 @@
   $sql = "SELECT DISTINCT(major) FROM Program";
   $majorList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
+  
+  $program = null;
+  $application = null;
   // get the query parameters sent by user through POST
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
   $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
@@ -96,11 +99,11 @@
       <nav class="website-nav">
         <ul>
           <li><a class="home-link" href="index.php">Home</a></li>
-          <li><a href="about.html">About</a></li>
+          <!--li><a href="about.html">About</a></li-->
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Make a Query</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
     </header>
@@ -207,7 +210,6 @@
             <th>Foreign rate</th>
           </tr>
           <?php 
-            
             while($row = mysqli_fetch_array($program))
               {
               $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
@@ -236,7 +238,7 @@
     </p>
   </footer>
 
-  <script src="js/set-background.js"></script>
+  <!--script src="js/set-background.js"></script-->
 </body>
 </html>
 <?php

@@ -83,6 +83,6 @@
     <p class="footer-contents">Designed for GaTech CS4440</p>
   </footer>
 
-  <script src="js/set-background.js"></script>
+  <!--script src="js/set-background.js"></script-->
 </body>
 </html>

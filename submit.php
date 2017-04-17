@@ -123,11 +123,11 @@
       <nav class="website-nav">
         <ul>
           <li><a class="home-link" href="index.php">Home</a></li>
-          <li><a href="about.html">About</a></li>
+          <!--li><a href="about.html">About</a></li-->
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Make a Query</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
     </header>
@@ -192,7 +192,7 @@
     </p>
   </footer>
 
-  <script src="js/set-background.js"></script>
+  <!--script src="js/set-background.js"></script-->
 </body>
 </html>
 
