@@ -102,15 +102,16 @@
           <!--li><a href="about.html">About</a></li-->
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
-          <li><a href="query.php">Look for Programs</a></li>
+          <li><a href="query.php">Make a Query</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
     </header>
     <section class="page-content">
       <article>
-        <h2>Search For Program</h2>
-          <label for="sname">School Name: </label>
+        <form action='query.php' method='post'>
+        <h2>Search For Application</h2>
+          <label for="sname">School Name</label>
           <input type="text" list="schoolname" autocomplete="off" name="sname">
           <datalist id="schoolname">
             <?php
@@ -121,7 +122,7 @@
             ?>
           </datalist><br>
 
-          <label for="pdegree">Degree level: </label>
+          <label for="pdegree">Program Name: </label>
           <input type="text" list="degreename" autocomplete="off" name="pdegree">
           <datalist id="degreename">
             <?php
@@ -130,9 +131,9 @@
               <option value="<?php echo $row['degree']; ?>"><?php echo $row['degree']; ?></option>
               <?php } 
             ?>
-          </datalist><br>
+          </datalist>
 
-          <label for="pmajor">Major: </label>
+          <label for="pmajor"> in </label>
           <input type="text" list="majorname" autocomplete="off" name="pmajor">
           <datalist id="majorname">
             <?php
@@ -142,33 +143,30 @@
               <?php } 
             ?>
           </datalist><br>
-          GPA: <input type="number" name="L_GPA" value="0.0" step = 0.1> ~ <input type="number" name="U_GPA" value="4.0" step = 0.1><br>
-          TOEFL: <input type="number" name="L_TOEFL" value="0" step = 1> ~ <input type="number" name="U_TOEFL" value="120" step = 1><br>
-          GRE Q: <input type="number" name="L_GREQ" value="0" step = 1> ~ <input type="number" name="U_GREQ" value="170" step = 1><br>
-          GRE V: <input type="number" name="L_GREV" value="0" step = 1> ~ <input type="number" name="U_GREV" value="170" step = 1><br>
-          GRE AWA: <input type="number" name="L_GREAWA" value="0.0" step = 1> ~ <input type="number" name="U_GREAWA" value="6.0" step = 0.5><br>
-          GMAT: <input type="number" name="L_GMAT" value="0" step = 1> ~ <input type="number" name="U_GMAT" value="900" step = 1><br>
-          Admission rate: <input type="number" name="L_AdRate" value="0.00" step = 0.01> ~ <input type="number" name="U_AdRate" value="1.00" step = 0.01><br>
-          Foreign students rate: <input type="number" name="L_ForeignRate" value="0.00" step = 0.01> ~ <input type="number" name="U_ForeignRate" value="1.00" step = 0.01><br>
-          <input type='submit' name = 'submit' value='Look for Programs'/>
-        </form>
 
+          Term: <select name="term">
+                  <option value="Fall 2017">Fall 2017</option>
+                  <option value="Spring 2017">Spring 2017</option>
+                </select><br>
+          <input type='submit' name = 'submit' value='Look for Applications'/>
+        
         <br><br>
-        <h2>Program</h2>
+        <h2>Application</h2>
         <table class="fancytable">
           <tr class="headerrow">
             <th>School</th>
-            <th>Degree</th>
-            <th>Major</th> 
+            <th>Program</th> 
+            <th>Term
             <th>GPA</th>
             <th>TOEFL</th>
             <th>GRE(Q/V/AWA)</th>
             <th>GMAT</th>
-            <th>AD rate</th>
-            <th>Foreign rate</th>
+            <th>Result</th>
+            <th>Date of Result</th>
           </tr>
-          <?php 
-            while($row = mysqli_fetch_array($program))
+          <?php
+            /* 
+            while($row = mysqli_fetch_array($application))
               {
               $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
               echo "<tr class=\"datarowodd\">";
@@ -183,6 +181,7 @@
               echo "<td>".intval(100*$row["foreign_count"]/$row["ad_count"])."%</td>";
               echo "</tr>";
               }
+            */
           ?>
         </table>
       </article>
@@ -222,6 +221,14 @@ function findProgramID($connection, $programdegree, $programmajor, $schoolID){
     array_push($retArray, $row['ID']);
   }
   return $retArray;
+}
+
+/* find applicant*/
+function findApplicant($connection, $applicantID){
+  $sql = "SELECT * FROM applicant
+            WHERE ID = '$applicantID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  return $sqlReturn;
 }
 
 /* find application */

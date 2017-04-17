@@ -81,7 +81,8 @@
     <div class="message">
       <div class="text">
         <h1>GradBuffet</h1>
-        <p>Sign in first to submit your result</p>
+        <p>To submit your application results, click "Submit"</p>
+        <p>To make a query to find others' application results or programs, click "Make a Query"</p>
       </div>
     </div>
     <div class="push"></div>

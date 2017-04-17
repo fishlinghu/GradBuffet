@@ -133,7 +133,7 @@
     </header>
     <section class="page-content">
       <article>
-        <h1>User submit their result here</h1>
+        <h1>Please submit your application result here!</h1>
         <form action="submit.php" method="post">
           <label for="sname">School Name</label>
           <input type="text" list="schoolname" autocomplete="off" name="sname">
@@ -178,7 +178,7 @@
                     <option value=1>Admitted</option>
                     <option value=0>Rejected</option>
                   </select><br>
-          <input type="submit">
+          <input type="submit" value="Submit">
         </form>
 
       </article>
