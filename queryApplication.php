@@ -47,7 +47,6 @@
   if(isset($_POST['submit'])){
     if($_POST['submit'] == 'Look for Applications'){
       $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
-      print_r($application);  
     }
     else if($_POST['submit'] == 'Look for Programs'){
       $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
@@ -163,23 +162,25 @@
             <th>Date of Result</th>
           </tr>
           <?php
-            /* 
+            
             while($row = mysqli_fetch_array($application))
               {
-              $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
+              $tempSchoolName = findSchoolName($connection, $row["schoolID"]);
+              $tempProgramName = findProgramName($connection, $row["programID"]);
+              $tempApplicant = findApplicant($connection, $row["applicantID"]);
               echo "<tr class=\"datarowodd\">";
               echo "<td>".$tempSchoolName."</td>"; // need to get school name
-              echo "<td>".$row["degree"]."</td>";
-              echo "<td>".$row["major"]."</td>";
-              echo "<td>".$row["avgGPA"]."</td>";
-              echo "<td>".$row["avgTOEFL"]."</td>";
-              echo "<td>".$row["avgGREQ"]."/".$row["avgGREV"]."/".$row["avgGREAWA"]."</td>";
-              echo "<td>".$row["avgGMAT"]."</td>";
-              echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
-              echo "<td>".intval(100*$row["foreign_count"]/$row["ad_count"])."%</td>";
+              echo "<td>".$tempProgramName."</td>";
+              echo "<td>".$row["term"]."</td>";
+              echo "<td>".$tempApplicant["gpa"]."</td>";
+              echo "<td>".$tempApplicant["toefl"]."</td>";
+              echo "<td>".$tempApplicant["greQ"]."/".$tempApplicant["greV"]."/".$tempApplicant["greAWA"]."</td>";
+              echo "<td>".$tempApplicant["gmat"]."</td>";
+              echo "<td>".$row["result"]."</td>";
+              echo "<td>".$row["dateResult"]."</td>";
               echo "</tr>";
               }
-            */
+            
           ?>
         </table>
       </article>
@@ -226,6 +227,7 @@ function findApplicant($connection, $applicantID){
   $sql = "SELECT * FROM Applicant
             WHERE ID = '$applicantID'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
   return $sqlReturn;
 }
 
@@ -233,16 +235,13 @@ function findApplicant($connection, $applicantID){
 function findApplication($connection, $programdegree, $programmajor, $schoolname, $term){
   $schoolID = findSchoolID($connection, $schoolname);
   $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
-
-  if($schoolID == null && $programID == null){
-    echo "<script type=\"text/javascript\">
-            alert(\"Please enter something!\")
-          </script>";
-    return;
-  }
+  $programIDStr = implode(',',$programID);
+  //echo $schoolID;
+  //echo $programID;
+  //echo $programIDStr;
 
   $sql = "SELECT * FROM Application
-            WHERE (programID = '$programID' OR '$programID' = '') 
+            WHERE (programID IN ($programIDStr) OR '$programIDStr' = '') 
               AND (schoolID = '$schoolID' OR '$schoolID' = '') 
               AND term = '$term'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
@@ -260,4 +259,15 @@ function findSchoolName($connection, $schoolID){
   $schoolname = $sqlReturn['name'];
   return $schoolname;
 }
+
+/* find program name */
+function findProgramName($connection, $programID){
+  $sql = "SELECT * FROM Program
+            WHERE ID = '$programID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $programname = $sqlReturn['degree'] + " in " + $sqlReturn["major"];
+  return $programname;
+}
 ?>
+
