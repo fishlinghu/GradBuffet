@@ -39,40 +39,33 @@
 
   
   $program = null;
-  $application = null;
   // get the query parameters sent by user through POST
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
   $programdegree = (isset($_POST['pdegree']) ? $_POST['pdegree'] : null);
   $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
-  $term = (isset($_POST['term']) ? $_POST['term'] : null);
+  
   // use those parameters to do the query
   if(isset($_POST['submit'])){
-    if($_POST['submit'] == 'Look for Applications'){
-      $application = findApplication($connection, $programdegree, $programmajor, $schoolname, $term);
-      print_r($application);  
-    }
-    else if($_POST['submit'] == 'Look for Programs'){
-      $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
-      $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
-      $L_TOEFL = (isset($_POST['L_TOEFL']) ? $_POST['L_TOEFL'] : null);
-      $U_TOEFL = (isset($_POST['U_TOEFL']) ? $_POST['U_TOEFL'] : null);
-      $L_GREQ = (isset($_POST['L_GREQ']) ? $_POST['L_GREQ'] : null);
-      $U_GREQ = (isset($_POST['U_GREQ']) ? $_POST['U_GREQ'] : null);
-      $L_GREV = (isset($_POST['L_GREV']) ? $_POST['L_GREV'] : null);
-      $U_GREV = (isset($_POST['U_GREV']) ? $_POST['U_GREV'] : null);
-      $L_GREAWA = (isset($_POST['L_GREAWA']) ? $_POST['L_GREAWA'] : null);
-      $U_GREAWA = (isset($_POST['U_GREAWA']) ? $_POST['U_GREAWA'] : null);
-      $L_GMAT = (isset($_POST['L_GMAT']) ? $_POST['L_GMAT'] : null);
-      $U_GMAT = (isset($_POST['U_GMAT']) ? $_POST['U_GMAT'] : null);
-      $L_AdRate = (isset($_POST['L_AdRate']) ? $_POST['L_AdRate'] : null);
-      $U_AdRate = (isset($_POST['U_AdRate']) ? $_POST['U_AdRate'] : null);
-      $L_ForeignRate = (isset($_POST['L_ForeignRate']) ? $_POST['L_ForeignRate'] : null);
-      $U_ForeignRate = (isset($_POST['U_ForeignRate']) ? $_POST['U_ForeignRate'] : null);
-      $program = findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate);
+    $L_GPA = (isset($_POST['L_GPA']) ? $_POST['L_GPA'] : null);
+    $U_GPA = (isset($_POST['U_GPA']) ? $_POST['U_GPA'] : null);
+    $L_TOEFL = (isset($_POST['L_TOEFL']) ? $_POST['L_TOEFL'] : null);
+    $U_TOEFL = (isset($_POST['U_TOEFL']) ? $_POST['U_TOEFL'] : null);
+    $L_GREQ = (isset($_POST['L_GREQ']) ? $_POST['L_GREQ'] : null);
+    $U_GREQ = (isset($_POST['U_GREQ']) ? $_POST['U_GREQ'] : null);
+    $L_GREV = (isset($_POST['L_GREV']) ? $_POST['L_GREV'] : null);
+    $U_GREV = (isset($_POST['U_GREV']) ? $_POST['U_GREV'] : null);
+    $L_GREAWA = (isset($_POST['L_GREAWA']) ? $_POST['L_GREAWA'] : null);
+    $U_GREAWA = (isset($_POST['U_GREAWA']) ? $_POST['U_GREAWA'] : null);
+    $L_GMAT = (isset($_POST['L_GMAT']) ? $_POST['L_GMAT'] : null);
+    $U_GMAT = (isset($_POST['U_GMAT']) ? $_POST['U_GMAT'] : null);
+    $L_AdRate = (isset($_POST['L_AdRate']) ? $_POST['L_AdRate'] : null);
+    $U_AdRate = (isset($_POST['U_AdRate']) ? $_POST['U_AdRate'] : null);
+    $L_ForeignRate = (isset($_POST['L_ForeignRate']) ? $_POST['L_ForeignRate'] : null);
+    $U_ForeignRate = (isset($_POST['U_ForeignRate']) ? $_POST['U_ForeignRate'] : null);
+    $program = findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate);
       
       //echo $program['major'];
       //echo $program['degree'];
-    }
   }
   
 ?>
@@ -103,12 +96,14 @@
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Look for Programs</a></li>
+          <li><a href="queryApplication.php">Look for Applications</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
     </header>
     <section class="page-content">
       <article>
+        <form action='query.php' method='post'>
         <h2>Search For Program</h2>
           <label for="sname">School Name: </label>
           <input type="text" list="schoolname" autocomplete="off" name="sname">

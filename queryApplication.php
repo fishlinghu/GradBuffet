@@ -37,8 +37,6 @@
   $sql = "SELECT DISTINCT(major) FROM Program";
   $majorList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-  
-  $program = null;
   $application = null;
   // get the query parameters sent by user through POST
   $schoolname = (isset($_POST['sname']) ? $_POST['sname'] : null);
@@ -68,7 +66,6 @@
       $U_AdRate = (isset($_POST['U_AdRate']) ? $_POST['U_AdRate'] : null);
       $L_ForeignRate = (isset($_POST['L_ForeignRate']) ? $_POST['L_ForeignRate'] : null);
       $U_ForeignRate = (isset($_POST['U_ForeignRate']) ? $_POST['U_ForeignRate'] : null);
-      $program = findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate);
       
       //echo $program['major'];
       //echo $program['degree'];
@@ -102,14 +99,15 @@
           <!--li><a href="about.html">About</a></li-->
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
-          <li><a href="query.php">Make a Query</a></li>
+          <li><a href="query.php">Look for Programs</a></li>
+          <li><a href="queryApplication.php">Look for Applications</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
     </header>
     <section class="page-content">
       <article>
-        <form action='query.php' method='post'>
+        <form action='queryApplication.php' method='post'>
         <h2>Search For Application</h2>
           <label for="sname">School Name</label>
           <input type="text" list="schoolname" autocomplete="off" name="sname">
@@ -225,7 +223,7 @@ function findProgramID($connection, $programdegree, $programmajor, $schoolID){
 
 /* find applicant*/
 function findApplicant($connection, $applicantID){
-  $sql = "SELECT * FROM applicant
+  $sql = "SELECT * FROM Applicant
             WHERE ID = '$applicantID'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   return $sqlReturn;
@@ -247,29 +245,6 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
             WHERE (programID = '$programID' OR '$programID' = '') 
               AND (schoolID = '$schoolID' OR '$schoolID' = '') 
               AND term = '$term'";
-  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-  //$sqlReturn = mysqli_fetch_array( $sqlReturn );
-
-  return $sqlReturn;
-}
-
-/* find program */
-function findProgram($connection, $programdegree, $programmajor, $schoolname, $U_GPA, $L_GPA, $U_TOEFL, $L_TOEFL, $U_GREQ, $L_GREQ, $U_GREV, $L_GREV, $U_GREAWA, $L_GREAWA, $U_GMAT, $L_GMAT, $U_AdRate, $L_AdRate, $U_ForeignRate, $L_ForeignRate){
-  $schoolID = findSchoolID($connection, $schoolname);
-  $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
-  $programIDStr = implode(',',$programID);
-  //echo $programIDStr;
-  $sql = "SELECT * FROM Program
-            WHERE (ID IN ($programIDStr) OR '$programIDStr' = '') 
-              AND (school_ID = '$schoolID' OR '$schoolID' = '') 
-              AND (avgGPA >= $L_GPA AND avgGPA <= $U_GPA)
-              AND (avgTOEFL >= $L_TOEFL AND avgTOEFL <= $U_TOEFL)
-              AND (avgGREV >= $L_GREV AND avgGREV <= $U_GREV)
-              AND (avgGREQ >= $L_GREQ AND avgGREQ <= $U_GREQ)
-              AND (avgGREAWA >= $L_GREAWA AND avgGREAWA <= $U_GREAWA)
-              AND (avgGMAT >= $L_GMAT AND avgGMAT <= $U_GMAT)
-              AND (ad_count/total_count >= $L_AdRate AND ad_count/total_count <= $U_AdRate)
-              AND (foreign_count/total_count >= $L_ForeignRate AND foreign_count/total_count <= $U_ForeignRate)";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   //$sqlReturn = mysqli_fetch_array( $sqlReturn );
 

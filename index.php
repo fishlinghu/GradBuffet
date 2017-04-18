@@ -72,7 +72,8 @@
           <!--li><a href="about.html">About</a></li-->
           <li><a href="signup.php">Sign Up</a></li>
           <li><a href="submit.php">Submit Result</a></li>
-          <li><a href="query.php">Make a Query</a></li>
+          <li><a href="query.php">Look for Programs</a></li>
+          <li><a href="queryApplication.php">Look for Applications</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
