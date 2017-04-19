@@ -166,6 +166,10 @@
             while($row = mysqli_fetch_array($program))
               {
               $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
+              $foreign_rate = 0;
+              if($row["ad_count"] != 0){
+                $foreign_rate = intval(100*$row["foreign_count"]/$row["ad_count"]);
+              }
               echo "<tr class=\"datarowodd\">";
               echo "<td>".$tempSchoolName."</td>"; // need to get school name
               echo "<td>".$row["degree"]."</td>";
@@ -175,7 +179,7 @@
               echo "<td>".$row["avgGREQ"]."/".$row["avgGREV"]."/".$row["avgGREAWA"]."</td>";
               echo "<td>".$row["avgGMAT"]."</td>";
               echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
-              echo "<td>".intval(100*$row["foreign_count"]/$row["ad_count"])."%</td>";
+              echo "<td>".$foreign_rate."%</td>";
               echo "</tr>";
               }
           ?>
