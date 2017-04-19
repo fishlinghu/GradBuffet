@@ -168,6 +168,12 @@
               $tempSchoolName = findSchoolName($connection, $row["schoolID"]);
               $tempProgramName = findProgramName($connection, $row["programID"]);
               $tempApplicant = findApplicant($connection, $row["applicantID"]);
+              if($row["result"] == 1){
+                $tempResult = "Admitted";
+              }
+              else{
+                $tempResult = "Rejected";
+              }
               echo "<tr class=\"datarowodd\">";
               echo "<td>".$tempSchoolName."</td>"; // need to get school name
               echo "<td>".$tempProgramName."</td>";
@@ -176,7 +182,7 @@
               echo "<td>".$tempApplicant["toefl"]."</td>";
               echo "<td>".$tempApplicant["greQ"]."/".$tempApplicant["greV"]."/".$tempApplicant["greAWA"]."</td>";
               echo "<td>".$tempApplicant["gmat"]."</td>";
-              echo "<td>".$row["result"]."</td>";
+              echo "<td>".$tempResult."</td>";
               echo "<td>".$row["dateResult"]."</td>";
               echo "</tr>";
               }
@@ -266,7 +272,7 @@ function findProgramName($connection, $programID){
             WHERE ID = '$programID'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
   $sqlReturn = mysqli_fetch_array( $sqlReturn );
-  $programname = $sqlReturn['degree'] + " in " + $sqlReturn["major"];
+  $programname = $sqlReturn['degree'] . " in " . $sqlReturn["major"];
   return $programname;
 }
 ?>
