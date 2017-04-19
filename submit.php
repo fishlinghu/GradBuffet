@@ -103,7 +103,7 @@
     $_POST = array();
     echo "<script type=\"text/javascript\">
             alert(\"Thanks for your submission!\")
-            
+            location = \"index.php\"
           </script>";
     //location = \"index.php\"
     }
@@ -170,6 +170,8 @@
           </datalist><br>
 
           Term: <select name="term">
+                  <option value="Fall 2018">Fall 2018</option>
+                  <option value="Spring 2018">Spring 2018</option>
                   <option value="Fall 2017">Fall 2017</option>
                   <option value="Spring 2017">Spring 2017</option>
                 </select><br>

@@ -83,7 +83,8 @@
       <div class="text">
         <h1>GradBuffet</h1>
         <p>To submit your application results, click "Submit"</p>
-        <p>To make a query to find others' application results or programs, click "Make a Query"</p>
+        <p>To search for programs their statistical data, click "Look for Programs"</p>
+        <p>To search for others' application results or applicants' data, click "Look for Applications"</p>
       </div>
     </div>
     <div class="push"></div>
