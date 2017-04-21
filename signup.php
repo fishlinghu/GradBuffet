@@ -79,6 +79,7 @@
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Look for Programs</a></li>
           <li><a href="queryApplication.php">Look for Applications</a></li>
+          <li><a href="bestFit.php">Find Best Fit</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>

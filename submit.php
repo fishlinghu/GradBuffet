@@ -128,6 +128,7 @@
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Look for Programs</a></li>
           <li><a href="queryApplication.php">Look for Applications</a></li>
+          <li><a href="bestFit.php">Find Best Fit</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
@@ -170,8 +171,6 @@
           </datalist><br>
 
           Term: <select name="term">
-                  <option value="Fall 2018">Fall 2018</option>
-                  <option value="Spring 2018">Spring 2018</option>
                   <option value="Fall 2017">Fall 2017</option>
                   <option value="Spring 2017">Spring 2017</option>
                   <option value="Fall 2016">Fall 2016</option>

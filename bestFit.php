@@ -70,6 +70,7 @@
           <li><a href="submit.php">Submit Result</a></li>
           <li><a href="query.php">Look for Programs</a></li>
           <li><a href="queryApplication.php">Look for Applications</a></li>
+          <li><a href="bestFit.php">Find Best Fit</a></li>
           <!--li><a href="contact.html">Contact</a></li-->
         </ul>
       </nav>
@@ -91,6 +92,26 @@
         <input type='submit' name = 'submit' value='Look for Programs'/>
 
         <br><br>
+        <h2>Your information</h2>
+        <table class="fancytable">
+          <tr class="headerrow">
+            <th>GPA</th>
+            <th>TOEFL</th>
+            <th>GRE(Q/V/AWA)</th>
+            <th>GMAT</th>
+          </tr>
+          <?php
+            $row = findApplicant($connection, $applicantID);
+            echo "<tr class=\"datarowodd\">";
+            echo "<td>".$row["gpa"]."</td>";
+            echo "<td>".$row["toefl"]."</td>";
+            echo "<td>".$row["greQ"]."/".$row["greV"]."/".$row["greAWA"]."</td>";
+            echo "<td>".$row["gmat"]."</td>";
+            echo "</tr>";
+          ?>
+        </table>
+
+        <br><br>
         <h2>Your top 10 best fit!</h2>
         <table class="fancytable">
           <tr class="headerrow">
@@ -103,6 +124,7 @@
             <th>GMAT</th>
             <th>AD rate</th>
             <th>Foreign rate</th>
+            <th>ERROR</th>
           </tr>
           <?php 
             while($row = mysqli_fetch_array($programArray))
@@ -122,6 +144,7 @@
               echo "<td>".$row["avgGMAT"]."</td>";
               echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
               echo "<td>".$foreign_rate."%</td>";
+              echo "<td>".$row["x"]."</td>";
               echo "</tr>";
               }
           ?>
@@ -145,9 +168,7 @@
 /* find program */
 function getSortedProgram($connection, $programmajor, $applicantID){
   // get the data of the applicant
-  $sql = "SELECT * FROM Applicant WHERE ID = '$applicantID'";
-  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
-  $applicantData = mysqli_fetch_array( $sqlReturn );
+  $applicantData = findApplicant($connection, $applicantID);
   $gpa = $applicantData['gpa'];
   $toefl = $applicantData['toefl'];
   $greV = $applicantData['greV'];
@@ -155,7 +176,11 @@ function getSortedProgram($connection, $programmajor, $applicantID){
   $greAWA = $applicantData['greAWA'];
   $gmat = $applicantData['gmat'];
 
-  $sql = "SELECT *, SQRT($gpa-avgGPA) AS x FROM Program
+  $sql = "SELECT *, SQRT(($gpa-avgGPA)*($gpa-avgGPA)/16 
+                        + 0.3*($toefl-avgTOEFL)*($toefl-avgTOEFL)/14400
+                        + 0.05*($greV-avgGREV)*($greV-avgGREV)/25600
+                        + 0.05*($greV-avgGREQ)*($greV-avgGREQ)/25600
+                        + 0.05*($greAWA-avgGREAWA)*($greAWA-avgGREAWA)/36) AS x FROM Program
             WHERE major = '$programmajor'
             ORDER BY x ASC
             LIMIT 10";
@@ -173,5 +198,14 @@ function findSchoolName($connection, $schoolID){
   $sqlReturn = mysqli_fetch_array( $sqlReturn );
   $schoolname = $sqlReturn['name'];
   return $schoolname;
+}
+
+/* find applicant */
+function findApplicant($connection, $applicantID){
+  $sql = "SELECT * FROM Applicant WHERE ID = '$applicantID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $applicantData = mysqli_fetch_array( $sqlReturn );
+
+  return $applicantData;
 }
 ?>
