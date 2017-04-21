@@ -25,13 +25,33 @@
   else
     {
     // user did not log in
-    echo "<a href=\"login.php\">Login</a>";
+    echo "<script type=\"text/javascript\">
+            alert(\"Please log in to find your best fit!\")
+            location = \"login.php\"
+          </script>";
     }
 
   $sql = "SELECT DISTINCT(major) FROM Program";
   $majorList = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
+  $applicantID = $_SESSION['applicantID'];
+
+  $programArray = null;
+
+  if(isset($_POST['submit'])){
+    $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
+    $programArray = getSortedProgram($connection, $programmajor, $applicantID);
+    }
+
 ?>
+<style>
+  .fancytable{border:1px solid #cccccc; width:100%;border-collapse:collapse;}
+  .fancytable td{border:1px solid #cccccc; color:#555555;text-align:center;line-height:28px;}
+  .headerrow{ background-color:#555555;}
+  .headerrow td{ color:#ffffff; text-align:center;}
+  .datarowodd{background-color:#ffa64d;}
+  .datarowodd td{background-color:#ffa64d;}
+</style>
 <head>
   <meta charset="utf-8">
   <title>Grad Buffet - Sign Up</title>
@@ -56,6 +76,7 @@
     </header>
     <section class="page-content">
       <article>
+        <form action='bestFit.php' method='post'>
         <h2>Select your major</h2>
           <label for="pmajor">Major: </label>
           <input type="text" list="majorname" autocomplete="off" name="pmajor">
@@ -68,6 +89,43 @@
             ?>
           </datalist><br><br>
         <input type='submit' name = 'submit' value='Look for Programs'/>
+
+        <br><br>
+        <h2>Your top 10 best fit!</h2>
+        <table class="fancytable">
+          <tr class="headerrow">
+            <th>School</th>
+            <th>Degree</th>
+            <th>Major</th> 
+            <th>GPA</th>
+            <th>TOEFL</th>
+            <th>GRE(Q/V/AWA)</th>
+            <th>GMAT</th>
+            <th>AD rate</th>
+            <th>Foreign rate</th>
+          </tr>
+          <?php 
+            while($row = mysqli_fetch_array($programArray))
+              {
+              $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
+              $foreign_rate = 0;
+              if($row["ad_count"] != 0){
+                $foreign_rate = intval(100*$row["foreign_count"]/$row["ad_count"]);
+              }
+              echo "<tr class=\"datarowodd\">";
+              echo "<td>".$tempSchoolName."</td>"; // need to get school name
+              echo "<td>".$row["degree"]."</td>";
+              echo "<td>".$row["major"]."</td>";
+              echo "<td>".$row["avgGPA"]."</td>";
+              echo "<td>".$row["avgTOEFL"]."</td>";
+              echo "<td>".$row["avgGREQ"]."/".$row["avgGREV"]."/".$row["avgGREAWA"]."</td>";
+              echo "<td>".$row["avgGMAT"]."</td>";
+              echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
+              echo "<td>".$foreign_rate."%</td>";
+              echo "</tr>";
+              }
+          ?>
+        </table>
       </article>
     </section>
     <div class="push"></div>
@@ -84,14 +142,36 @@
 </html>
 
 <?php
+/* find program */
+function getSortedProgram($connection, $programmajor, $applicantID){
+  // get the data of the applicant
+  $sql = "SELECT * FROM Applicant WHERE ID = '$applicantID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $applicantData = mysqli_fetch_array( $sqlReturn );
+  $gpa = $applicantData['gpa'];
+  $toefl = $applicantData['toefl'];
+  $greV = $applicantData['greV'];
+  $greQ = $applicantData['greQ'];
+  $greAWA = $applicantData['greAWA'];
+  $gmat = $applicantData['gmat'];
 
-/* Add an applicant to the table. */
-function AddApplicant($connection, $account, $pwd, $gpa, $toefl, $greV, $greQ, $greAWA, $gmat, $foreign_student, $num_pub) {
-   $clean_account = mysqli_real_escape_string($connection, $account);
+  $sql = "SELECT *, SQRT($gpa-avgGPA) AS x FROM Program
+            WHERE major = '$programmajor'
+            ORDER BY x ASC
+            LIMIT 10";
 
-   $query = "INSERT INTO `Applicant` (`account`, `pwd`, `gpa`, `toefl`, `greV`, `greQ`, `greAWA`, `gmat`, `foreign_student`, `num_pub`)
-              VALUES ('$clean_account', '$pwd', '$gpa', '$toefl', '$greV', '$greQ', '$greAWA', '$gmat', '$foreign_student', '$num_pub');";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
-   if(!mysqli_query($connection, $query)) echo("Error adding applicant data.". mysqli_error($connection));
+  return $sqlReturn;
+}
+
+/* find school name */
+function findSchoolName($connection, $schoolID){
+  $sql = "SELECT ID, name FROM School 
+            WHERE ID = '$schoolID'";
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+  $sqlReturn = mysqli_fetch_array( $sqlReturn );
+  $schoolname = $sqlReturn['name'];
+  return $schoolname;
 }
 ?>

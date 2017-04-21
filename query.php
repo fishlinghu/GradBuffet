@@ -75,9 +75,7 @@
   .headerrow{ background-color:#555555;}
   .headerrow td{ color:#ffffff; text-align:center;}
   .datarowodd{background-color:#ffa64d;}
-  .dataroweven{ background-color:#efefef;}
   .datarowodd td{background-color:#ffa64d;}
-  .dataroweven td{ background-color:#efefef;}
 </style>
 <head>
   <meta charset="utf-8">
