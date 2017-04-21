@@ -250,9 +250,12 @@ function findProgram($connection, $programdegree, $programmajor, $schoolname, $U
   $schoolID = findSchoolID($connection, $schoolname);
   $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
   $programIDStr = implode(',',$programID);
+  if($programIDStr == ""){
+    return null;
+  }
   //echo $programIDStr;
   $sql = "SELECT * FROM Program
-            WHERE (ID IN ($programIDStr) OR '$programIDStr' = '') 
+            WHERE (ID IN ($programIDStr)) 
               AND (school_ID = '$schoolID' OR '$schoolID' = '') 
               AND (avgGPA >= $L_GPA AND avgGPA <= $U_GPA)
               AND (avgTOEFL >= $L_TOEFL AND avgTOEFL <= $U_TOEFL)
