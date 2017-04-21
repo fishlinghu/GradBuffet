@@ -37,10 +37,12 @@
   $applicantID = $_SESSION['applicantID'];
 
   $programArray = null;
+  $programArray2 = null;
 
   if(isset($_POST['submit'])){
     $programmajor = (isset($_POST['pmajor']) ? $_POST['pmajor'] : null);
     $programArray = getSortedProgram($connection, $programmajor, $applicantID);
+    $programArray2 = getSortedProgram2($connection, $programmajor, $applicantID);
     }
 
 ?>
@@ -112,7 +114,7 @@
         </table>
 
         <br><br>
-        <h2>Your top 10 best fit!</h2>
+        <h3>You are similar to admitted applicants of following programs</h3>
         <table class="fancytable">
           <tr class="headerrow">
             <th>School</th>
@@ -124,7 +126,6 @@
             <th>GMAT</th>
             <th>AD rate</th>
             <th>Foreign rate</th>
-            <th>ERROR</th>
           </tr>
           <?php 
             while($row = mysqli_fetch_array($programArray))
@@ -144,7 +145,43 @@
               echo "<td>".$row["avgGMAT"]."</td>";
               echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
               echo "<td>".$foreign_rate."%</td>";
-              echo "<td>".$row["x"]."</td>";
+              echo "</tr>";
+              }
+          ?>
+        </table>
+
+        <br><br>
+        <h3>You are better than average admitted applicant of following programs</h3>
+        <table class="fancytable">
+          <tr class="headerrow">
+            <th>School</th>
+            <th>Degree</th>
+            <th>Major</th> 
+            <th>GPA</th>
+            <th>TOEFL</th>
+            <th>GRE(Q/V/AWA)</th>
+            <th>GMAT</th>
+            <th>AD rate</th>
+            <th>Foreign rate</th>
+          </tr>
+          <?php 
+            while($row = mysqli_fetch_array($programArray2))
+              {
+              $tempSchoolName = findSchoolName($connection, $row["school_ID"]);
+              $foreign_rate = 0;
+              if($row["ad_count"] != 0){
+                $foreign_rate = intval(100*$row["foreign_count"]/$row["ad_count"]);
+              }
+              echo "<tr class=\"datarowodd\">";
+              echo "<td>".$tempSchoolName."</td>"; // need to get school name
+              echo "<td>".$row["degree"]."</td>";
+              echo "<td>".$row["major"]."</td>";
+              echo "<td>".$row["avgGPA"]."</td>";
+              echo "<td>".$row["avgTOEFL"]."</td>";
+              echo "<td>".$row["avgGREQ"]."/".$row["avgGREV"]."/".$row["avgGREAWA"]."</td>";
+              echo "<td>".$row["avgGMAT"]."</td>";
+              echo "<td>".intval(100*$row["ad_count"]/$row["total_count"])."%</td>";
+              echo "<td>".$foreign_rate."%</td>";
               echo "</tr>";
               }
           ?>
@@ -179,11 +216,37 @@ function getSortedProgram($connection, $programmajor, $applicantID){
   $sql = "SELECT *, SQRT(($gpa-avgGPA)*($gpa-avgGPA)/16 
                         + 0.3*($toefl-avgTOEFL)*($toefl-avgTOEFL)/14400
                         + 0.05*($greV-avgGREV)*($greV-avgGREV)/25600
-                        + 0.05*($greV-avgGREQ)*($greV-avgGREQ)/25600
+                        + 0.05*($greQ-avgGREQ)*($greQ-avgGREQ)/25600
                         + 0.05*($greAWA-avgGREAWA)*($greAWA-avgGREAWA)/36) AS x FROM Program
             WHERE major = '$programmajor'
             ORDER BY x ASC
-            LIMIT 10";
+            LIMIT 5";
+
+  $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
+
+  return $sqlReturn;
+}
+
+/* find program */
+function getSortedProgram2($connection, $programmajor, $applicantID){
+  // get the data of the applicant
+  $applicantData = findApplicant($connection, $applicantID);
+  $gpa = $applicantData['gpa'];
+  $toefl = $applicantData['toefl'];
+  $greV = $applicantData['greV'];
+  $greQ = $applicantData['greQ'];
+  $greAWA = $applicantData['greAWA'];
+  $gmat = $applicantData['gmat'];
+
+  $sql = "SELECT * FROM Program
+            WHERE major = '$programmajor'
+              AND $gpa >= avgGPA
+              AND $toefl >= avgTOEFL
+              AND $greV >= avgGREV
+              AND $greQ >= avgGREQ
+              AND $greAWA >= avgGREAWA
+            ORDER BY ($gpa-avgGPA)/4+0.3*($toefl-avgTOEFL)/120+0.05*($greV-avgGREV)/170+0.05*($greQ-avgGREQ)/170+0.05*($greAWA-avgGREAWA)/6 ASC
+            LIMIT 5";
 
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
 
