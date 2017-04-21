@@ -2,8 +2,8 @@
   session_start();
   include "dbinfo.inc";
   include "checkTable.php";
-  error_reporting(E_ALL);
-  ini_set('display_errors', 'On');
+  //error_reporting(E_ALL);
+  //ini_set('display_errors', 'On');
 ?>
 <html lang="en">
 <?php
