@@ -1,4 +1,5 @@
 <?php
+  session_start();
   include "dbinfo.inc";
   include "checkTable.php";
   //error_reporting(E_ALL);
