@@ -244,12 +244,15 @@ function findApplication($connection, $programdegree, $programmajor, $schoolname
   $schoolID = findSchoolID($connection, $schoolname);
   $programID = findProgramID($connection, $programdegree, $programmajor, $schoolID);
   $programIDStr = implode(',',$programID);
+  if($programIDStr == ""){
+    return null;
+  }
   //echo $schoolID;
   //echo $programID;
   //echo $programIDStr;
 
   $sql = "SELECT * FROM Application
-            WHERE (programID IN ($programIDStr) OR '$programIDStr' = '') 
+            WHERE (programID IN ($programIDStr)) 
               AND (schoolID = '$schoolID' OR '$schoolID' = '') 
               AND term = '$term'";
   $sqlReturn = mysqli_query($connection, $sql) or die("Error " . mysqli_error($connection));
