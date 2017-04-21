@@ -36,7 +36,6 @@
   //echo $programmajor;
   if (isset($_POST['submit'])) 
     {
-    echo "Fuck";
     $schoolArr = array("Carnegie Mellon University", 
                       "University of California, Berkeley", 
                       "University of Texas, Austin",
